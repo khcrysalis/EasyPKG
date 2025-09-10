@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		577759562E709A0D0008867E /* PackageKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 577759552E709A0D0008867E /* PackageKit.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		577759482E7098B80008867E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -20,6 +24,7 @@
 
 /* Begin PBXFileReference section */
 		5777594A2E7098B80008867E /* epkg */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = epkg; sourceTree = BUILT_PRODUCTS_DIR; };
+		577759552E709A0D0008867E /* PackageKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PackageKit.framework; path = ../../../../System/Library/PrivateFrameworks/PackageKit.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -35,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				577759562E709A0D0008867E /* PackageKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -45,6 +51,7 @@
 			isa = PBXGroup;
 			children = (
 				5777594C2E7098B80008867E /* epkg */,
+				577759542E709A0D0008867E /* Frameworks */,
 				5777594B2E7098B80008867E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -55,6 +62,14 @@
 				5777594A2E7098B80008867E /* epkg */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		577759542E709A0D0008867E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				577759552E709A0D0008867E /* PackageKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -94,6 +109,7 @@
 				TargetAttributes = {
 					577759492E7098B80008867E = {
 						CreatedOnToolsVersion = 16.2;
+						LastSwiftMigration = 1620;
 					};
 				};
 			};
@@ -248,18 +264,31 @@
 		577759522E7098B80008867E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "epkg/Supporting Files/epkg-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				SYSTEM_FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+				);
 			};
 			name = Debug;
 		};
 		577759532E7098B80008867E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "epkg/Supporting Files/epkg-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
+				SYSTEM_FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+				);
 			};
 			name = Release;
 		};

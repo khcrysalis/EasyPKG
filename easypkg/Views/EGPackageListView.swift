@@ -23,7 +23,6 @@ struct EGPackageListView: View {
 	var body: some View {
 		NavigationSplitView {
 			List(selection: $selectedPackage) {
-				// Normal Packages
 				Section("Installed Packages") {
 					ForEach(normalPackages, id: \.self) { receipt in
 						NavigationLink(value: receipt) {
@@ -99,10 +98,7 @@ struct EGPackageListView: View {
 		.navigationSubtitle("Using PackageKit.framework on macOS \(getMacOSVersion())")
 	}
 	
-	func getMacOSVersion() -> String {
-		let osVersion = ProcessInfo.processInfo.operatingSystemVersion
-		return "\(osVersion.majorVersion).\(osVersion.minorVersion).\(osVersion.patchVersion)"
-	}
+	// MARK: Load
 	
 	private func loadPackages() {
 		let allPackages = EGUtils.receiptsOnVolume(atPath: defaultVolume)
@@ -116,5 +112,12 @@ struct EGPackageListView: View {
 			guard let id = pkg.packageIdentifier() as? String else { return false }
 			return EGUtils.hiddenPackageIdentifiers().contains { hidden in id.contains(hidden) }
 		}
+	}
+	
+	// MARK: Helpers
+	
+	func getMacOSVersion() -> String {
+		let osVersion = ProcessInfo.processInfo.operatingSystemVersion
+		return "\(osVersion.majorVersion).\(osVersion.minorVersion).\(osVersion.patchVersion)"
 	}
 }

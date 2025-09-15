@@ -17,7 +17,8 @@ struct EGPackageInfoView: View {
 	@State private var receiptInstallPaths: [String] = []
 	@State private var selectedPaths: Set<String> = []
 	@State private var expandedNodes: Set<UUID> = []
-	@State private var shouldShowWarning: Bool = false
+	@State private var isDescriptivePresenting: Bool = false
+	
 	
 	var body: some View {
 		VStack {
@@ -27,6 +28,10 @@ struct EGPackageInfoView: View {
 					Text(receipt._packageName() as? String ?? "Unknown")
 						.font(.largeTitle)
 						.frame(maxWidth: .infinity, alignment: .leading)
+					Spacer()
+					Button("?") {
+						isDescriptivePresenting = true
+					}
 				}
 				Group {
 					Text("\(receipt.packageVersion()! as! String) • \(receipt.packageIdentifier()! as! String)")
@@ -52,6 +57,10 @@ struct EGPackageInfoView: View {
 			// package groups
 			
 			HStack {
+				Button("Deselect All") {
+					selectedPaths = []
+				}
+				
 				Spacer()
 				
 				Button("Delete Selected Paths") {
@@ -72,15 +81,14 @@ struct EGPackageInfoView: View {
 		.onChange(of: selectedPaths) { oldValue, newValue in
 			dump(selectedPaths)
 		}
+		.sheet(isPresented: $isDescriptivePresenting) {
+			EGPackageDescriptiveInfoView(receipt: receipt, volume: volume)
+		}
 	}
 	
 	// MARK: Load
 	
 	private func loadData() {
-		
-		print(receipt.receiptStoragePaths())
-		print(type(of: receipt.receiptStoragePaths()))
-		
 		let prefix = receipt.installPrefixPath()! as! String
 		prefixPath = prefix.hasPrefix("/") ? prefix : volume + prefix
 		prefixSeperator = prefixPath.hasSuffix("/") ? "" : "/"
@@ -91,6 +99,78 @@ struct EGPackageInfoView: View {
 				prefix: prefixPath + prefixSeperator,
 				installPaths: &receiptInstallPaths
 			)
+		}
+		
+		print(receipt.installDate())
+	}
+}
+
+// MARK: - EGPackageDescriptiveInfoView
+struct EGPackageDescriptiveInfoView: View {
+	@Environment(\.dismiss) private var dismiss
+	
+	var receipt: PKReceipt
+	var volume: String
+	
+	var body: some View {
+		NavigationStack {
+			Form {
+				Section {
+					LabeledContent(
+						"Name",
+						value: receipt._packageName() as? String ?? "Unknown"
+					)
+					LabeledContent(
+						"Identifier",
+						value: (receipt.packageIdentifier() as! String)
+					)
+					LabeledContent(
+						"Version",
+						value: receipt.packageVersion() as? String ?? "Unknown"
+					)
+					LabeledContent(
+						"Prefix Path",
+						value: receipt.installPrefixPath() as? String ?? "Unknown"
+					)
+					LabeledContent(
+						"Volume",
+						value: volume
+					)
+					LabeledContent(
+						"isSecure",
+						value: "\(receipt._isSecure())"
+					)
+					LabeledContent(
+						"Installed Date",
+						value: receipt.installDate() as? String ?? "Unknown"
+					)
+					LabeledContent(
+						"Additional Info",
+						value: receipt.additionalInfo() as? String ?? "Unknown"
+					)
+					LabeledContent(
+						"Groups",
+						value: (receipt.packageGroups() as? [String])?.joined(separator: "\n") ?? ""
+					)
+				}
+				Section {
+					LabeledContent(
+						"Receipt Paths",
+						value: (receipt.receiptStoragePaths() as! [String]).joined(separator: "\n")
+					)
+				}
+			}
+			.formStyle(.grouped)
+			.navigationTitle(receipt._packageName() as? String ?? "Unknown")
+			.toolbar {
+				ToolbarItem(placement: .cancellationAction) {
+					Button {
+						dismiss()
+					} label: {
+						Text("Close")
+					}
+				}
+			}
 		}
 	}
 }

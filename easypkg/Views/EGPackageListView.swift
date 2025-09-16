@@ -13,10 +13,8 @@ struct EGPackageListView: View {
 	@AppStorage("epkg.showHiddenPackages") var showHiddenPackages: Bool = false
 	
 	@State private var selectedFilter: PackageFilter = .default
-	
 	@State private var normalPackages: [PKReceipt] = []
 	@State private var hiddenPackages: [PKReceipt] = []
-	
 	@State private var selectedPackage: PKReceipt? = nil
 	@State private var isHistoryPresenting: Bool = false
 	
@@ -69,7 +67,6 @@ struct EGPackageListView: View {
 						}
 					}
 				}
-
 			}
 			.navigationTitle("Packages")
 			.listStyle(.sidebar)
@@ -121,9 +118,6 @@ struct EGPackageListView: View {
 		.onChange(of: showHiddenPackages) { _, _ in
 			loadPackages()
 		}
-		.onReceive(NotificationCenter.default.publisher(for: .packageListShouldUpdate)) { _ in
-			loadPackages()
-		}
 		.sheet(isPresented: $isHistoryPresenting) {
 			EGHistoryListView()
 		}
@@ -133,6 +127,7 @@ struct EGPackageListView: View {
 	// MARK: Load
 	
 	private func loadPackages() {
+		print("loading")
 		let allPackages = EGUtils.receiptsOnVolume(atPath: defaultVolume)
 		
 		normalPackages = allPackages.filter { pkg in

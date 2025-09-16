@@ -9,8 +9,7 @@ import SwiftUI
 
 // MARK: - PackageInfoView
 struct EGPackageInfoView: View {
-	var receipt: PKReceipt
-	var volume: String
+	@AppStorage("epkg.defaultVolume") var defaultVolume: String = "/"
 	
 	@State private var prefixPath: String = ""
 	@State private var prefixSeperator: String = ""
@@ -22,6 +21,9 @@ struct EGPackageInfoView: View {
 	@State private var isAlertPresenting = false
 	@State private var alertTitle = ""
 	@State private var alertMessage = ""
+	
+	var receipt: PKReceipt
+	var volume: String
 	
 	var body: some View {
 		VStack {
@@ -70,7 +72,6 @@ struct EGPackageInfoView: View {
 					Button("Delete Selected Paths") {
 						do {
 							try deleteFiles(for: selectedPaths)
-							selectedPaths = []
 						} catch {
 							alertTitle = "Failed to delete \(receipt._packageName() as? String ?? "Unknown")"
 							alertMessage = error.localizedDescription
@@ -82,7 +83,6 @@ struct EGPackageInfoView: View {
 						do {
 							try deleteFiles(for: selectedPaths)
 							try receipt.forgetReceipt()
-							selectedPaths = []
 						} catch {
 							alertTitle = "Failed to delete & forget \(receipt._packageName() as? String ?? "Unknown")"
 							alertMessage = error.localizedDescription
@@ -95,7 +95,6 @@ struct EGPackageInfoView: View {
 				Button("Forget") {
 					do {
 						try receipt.forgetReceipt()
-						selectedPaths = []
 					} catch {
 						alertTitle = "Failed to forget \(receipt._packageName() as? String ?? "Unknown")"
 						alertMessage = error.localizedDescription

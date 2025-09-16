@@ -22,6 +22,5 @@ extension PKReceipt {
 		for p in self.receiptStoragePaths() as! [String] {
 			try FileManager.default.removeItem(atPath: p)
 		}
-		NotificationCenter.default.post(name: .packageListShouldUpdate, object: nil)
 	}
 }

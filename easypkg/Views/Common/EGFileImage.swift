@@ -16,7 +16,8 @@ struct EGFileImage: View {
 			if let path = path, !path.isEmpty {
 				Image(nsImage: NSWorkspace.shared.icon(forFile: path)).resizable()
 			} else {
-				Image("package").resizable()
+				Image(nsImage: NSImage(contentsOfFile: "/System/Library/CoreServices/Installer.app/Contents/Resources/package.icns")!)
+					.resizable()
 			}
 		}
 		.frame(width: size, height: size)

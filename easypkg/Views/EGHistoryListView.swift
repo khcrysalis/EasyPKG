@@ -42,7 +42,8 @@ struct EGHistoryListView: View {
 				}
 			}
 			.frame(width: 500, height: 600)
-			.navigationTitle("Install History")
+			.navigationTitle("Install History Overall")
+			.navigationSubtitle("Includes previously installed packages.")
 			.toolbar {
 				ToolbarItem(placement: .cancellationAction) {
 					Button {

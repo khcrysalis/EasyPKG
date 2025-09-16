@@ -69,7 +69,6 @@ struct EGPathNode: Identifiable {
 	}
 }
 
-
 // MARK: - PackagePathsDisclosureView
 struct EGPackagePathsDisclosureView: View {
 	let node: EGPathNode
@@ -97,15 +96,7 @@ struct EGPackagePathsDisclosureView: View {
 				get: { selectedPaths.contains(node.path) },
 				set: { isOn in updateSelection(node: node, select: isOn) }
 			)) {
-				HStack {
-					EGFileImage(path: node.path, size: 16)
-					Text(node.name)
-				}
-				.contextMenu {
-					Button("Reveal in Finder") {
-						EGPathNode.revealInFinder(node: node)
-					}
-				}
+				fileRow(for: node)
 			}
 			.toggleStyle(.checkbox)
 			.disabled(!isEnabled)
@@ -124,19 +115,9 @@ struct EGPackagePathsDisclosureView: View {
 					get: { selectedPaths.contains(node.path) },
 					set: { isOn in updateSelection(node: node, select: isOn) }
 				)) {
-					HStack {
-						Image(nsImage: NSWorkspace.shared.icon(forFile: node.path))
-							.resizable()
-							.frame(width: 16, height: 16)
-						Text(node.name)
-					}
+					fileRow(for: node)
 				}
 				.toggleStyle(.checkbox)
-				.contextMenu {
-					Button("Reveal in Finder") {
-						EGPathNode.revealInFinder(node: node)
-					}
-				}
 			}
 			.disabled(!isEnabled)
 		}
@@ -172,5 +153,29 @@ struct EGPackagePathsDisclosureView: View {
 		}
 		
 		return paths
+	}
+	
+	// MARK: Builders
+	
+	private func fileRow(for node: EGPathNode) -> some View {
+		HStack {
+			EGFileImage(path: node.path, size: 16)
+			Text(node.name)
+		}
+		.contextMenu {
+			Button("Reveal in Finder") {
+				EGPathNode.revealInFinder(node: node)
+			}
+			Divider()
+			if selectedPaths.contains(node.path) {
+				Button("Deselect Individually") {
+					selectedPaths.remove(node.path)
+				}
+			} else {
+				Button("Select Individually") {
+					selectedPaths.insert(node.path)
+				}
+			}
+		}
 	}
 }

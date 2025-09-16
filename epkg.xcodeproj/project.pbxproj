@@ -8,31 +8,29 @@
 
 /* Begin PBXBuildFile section */
 		573164242E779302008C099F /* PackageKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 577759552E709A0D0008867E /* PackageKit.framework */; };
-		573164252E779302008C099F /* PackageKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 577759552E709A0D0008867E /* PackageKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		573164262E779302008C099F /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				573164252E779302008C099F /* PackageKit.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		5731640D2E778FAD008C099F /* easypkg.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = easypkg.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		577759552E709A0D0008867E /* PackageKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PackageKit.framework; path = ../../../../System/Library/PrivateFrameworks/PackageKit.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		575E3A792E78FF1B009A7842 /* Exceptions for "easypkg" folder in "easypkg" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/launch.sh,
+			);
+			target = 5731640C2E778FAD008C099F /* easypkg */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5731640E2E778FAD008C099F /* easypkg */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				575E3A792E78FF1B009A7842 /* Exceptions for "easypkg" folder in "easypkg" target */,
+			);
 			path = easypkg;
 			sourceTree = "<group>";
 		};
@@ -85,7 +83,6 @@
 				573164092E778FAD008C099F /* Sources */,
 				5731640A2E778FAD008C099F /* Frameworks */,
 				5731640B2E778FAD008C099F /* Resources */,
-				573164262E779302008C099F /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

@@ -10,7 +10,7 @@ macOS Application that dives into Apple's PackageKit.framework private framework
 
 ## Download
 
-Visit [releases](https://github.com/khcrysalis/EasyPKG/releases) and get the latest `.zip`.
+Visit [releases](https://github.com/khcrysalis/EasyPKG/releases) and get the latest `.dmg`.
 
 ## License
 

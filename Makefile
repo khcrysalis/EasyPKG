@@ -1,6 +1,6 @@
-NAME := epkg
+NAME := EasyPKG
 PLATFORM := macosx
-SCHEMES := easypkg
+SCHEMES := EasyPKG
 TMP := $(TMPDIR)/$(NAME)
 STAGE := $(TMP)/stage
 APP := $(TMP)/Build/Products/Release
@@ -30,8 +30,6 @@ $(SCHEMES):
 
 	@mkdir -p packages
 	@cp -R $(STAGE)/$@.app packages/
-	@cp $@/Resources/launch.sh packages/EasyPKG.app/Contents/MacOS/launch.sh
-	@/usr/libexec/PlistBuddy -c "Set :CFBundleExecutable launch.sh" "packages/$@.app/Contents/Info.plist"
 	@zip -r packages/$(NAME).zip packages/$@.app
 
 clean:

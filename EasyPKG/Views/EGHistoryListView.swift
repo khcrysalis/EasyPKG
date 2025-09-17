@@ -32,7 +32,7 @@ struct EGHistoryListView: View {
 							HStack {
 								EGFileImage()
 								LabeledContent(
-									item.displayName.isEmpty ? "Unknown" : item.displayName,
+									item.displayName.isEmpty ? .localized("Unknown") : item.displayName,
 									value: "\((item.displayVersion.isEmpty ? "NULL" : item.displayVersion))\n\(item.processName)"
 								)
 								.labeledContentStyle(.vertical)
@@ -42,14 +42,14 @@ struct EGHistoryListView: View {
 				}
 			}
 			.frame(width: 500, height: 600)
-			.navigationTitle("Install History Overall")
-			.navigationSubtitle("Includes previously installed packages.")
+			.navigationTitle(.localized("Install History Overall"))
+			.navigationSubtitle(.localized("Includes previously installed packages."))
 			.toolbar {
 				ToolbarItem(placement: .cancellationAction) {
 					Button {
 						dismiss()
 					} label: {
-						Text("Close")
+						Text(.localized("Close"))
 					}
 				}
 			}

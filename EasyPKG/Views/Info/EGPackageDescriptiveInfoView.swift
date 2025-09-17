@@ -20,70 +20,70 @@ struct EGPackageDescriptiveInfoView: View {
 			Form {
 				Section {
 					LabeledContent(
-						"Name",
-						value: receipt._packageName() as? String ?? "Unknown"
+						.localized("Name"),
+						value: receipt._packageName() as? String ?? .localized("Unknown")
 					)
 					LabeledContent(
-						"Identifier",
+						.localized("Identifier"),
 						value: (receipt.packageIdentifier() as! String)
 					)
 					LabeledContent(
-						"Version",
-						value: receipt.packageVersion() as? String ?? "Unknown"
+						.localized("Version"),
+						value: receipt.packageVersion() as? String ?? .localized("Unknown")
 					)
 					LabeledContent(
-						"Prefix Path",
-						value: receipt.installPrefixPath() as? String ?? "Unknown"
+						.localized("Prefix Path"),
+						value: receipt.installPrefixPath() as? String ?? .localized("Unknown")
 					)
 					LabeledContent(
-						"Volume",
+						.localized("Volume"),
 						value: volume
 					)
 					LabeledContent(
-						"Secure",
+						.localized("Secure"),
 						value: "\(receipt._isSecure())"
 					)
 					LabeledContent(
-						"Installed Date",
+						.localized("Installed Date"),
 						value: "\(receipt.installDate() as? Date ?? Date())"
 					)
 				}
 				
-				Section("Additional Info") {
+				Section(.localized("Additional Info")) {
 					LabeledContent(
-						"Additional Info",
-						value: receipt.additionalInfo() as? String ?? "N/A"
+						.localized("Additional Info"),
+						value: receipt.additionalInfo() as? String ?? .localized("Unknown")
 					)
 					.labelsHidden()
 				}
 				
-				Section("Groups") {
+				Section(.localized("Groups")) {
 					LabeledContent(
-						"Groups",
-						value: (receipt.packageGroups() as? [String])?.joined(separator: "\n") ?? "N/A"
+						.localized("Groups"),
+						value: (receipt.packageGroups() as? [String])?.joined(separator: "\n") ?? .localized("Unknown")
 					)
 					.labelsHidden()
 				}
 				
-				Section("Paths") {
+				Section(.localized("Receipt Paths")) {
 					LabeledContent(
-						"Receipt Paths",
+						.localized("Receipt Paths"),
 						value: (receipt.receiptStoragePaths() as! [String]).joined(separator: "\n")
 					)
-					Button("Reveal in Finder") {
+					Button(.localized("Reveal in Finder")) {
 						let fileUrls = (receipt.receiptStoragePaths() as! [String]).map { URL(fileURLWithPath: $0) }
 						NSWorkspace.shared.activateFileViewerSelecting(fileUrls)
 					}
 				}
 			}
 			.formStyle(.grouped)
-			.navigationTitle(receipt._packageName() as? String ?? "Unknown")
+			.navigationTitle(receipt._packageName() as? String ?? .localized("Unknown"))
 			.toolbar {
 				ToolbarItem(placement: .cancellationAction) {
 					Button {
 						dismiss()
 					} label: {
-						Text("Close")
+						Text(.localized("Close"))
 					}
 				}
 			}

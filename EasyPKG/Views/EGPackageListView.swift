@@ -9,6 +9,8 @@ import SwiftUI
 
 // MARK: - PackageListView
 struct EGPackageListView: View {
+	@StateObject private var helperManager = EGHelperManager()
+	
 	@AppStorage("epkg.defaultVolume") var defaultVolume: String = "/"
 	@AppStorage("epkg.showHiddenPackages") var showHiddenPackages: Bool = false
 	
@@ -39,7 +41,7 @@ struct EGPackageListView: View {
 		NavigationSplitView {
 			List(selection: $selectedPackage) {
 				if selectedFilter == .default {
-					Section("Installed Packages") {
+					Section(.localized("Installed Packages")) {
 						ForEach(normalPackages, id: \.self) { receipt in
 							NavigationLink(value: receipt) {
 								packageRow(receipt)
@@ -48,7 +50,7 @@ struct EGPackageListView: View {
 					}
 					
 					if showHiddenPackages {
-						Section("Hidden Installed Packages") {
+						Section(.localized("Hidden Installed Packages")) {
 							ForEach(hiddenPackages, id: \.self) { receipt in
 								NavigationLink(value: receipt) {
 									packageRow(receipt)
@@ -68,13 +70,13 @@ struct EGPackageListView: View {
 					}
 				}
 			}
-			.navigationTitle("Packages")
+			.navigationTitle(.localized("Packages"))
 			.listStyle(.sidebar)
 			.toolbar {
 				ToolbarItemGroup {
-					Picker("Filter", selection: $selectedFilter) {
+					Picker(.localized("Filter"), selection: $selectedFilter) {
 						ForEach(PackageFilter.allCases) { filter in
-							Text(filter.rawValue).tag(filter)
+							Text(filter.localizedName).tag(filter)
 						}
 					}
 					.labelsHidden()
@@ -85,15 +87,19 @@ struct EGPackageListView: View {
 			Group {
 				if let receipt = selectedPackage {
 					EGPackageInfoView(
+						helperManager: helperManager,
 						receipt: receipt,
-						volume: defaultVolume
+						volume: $defaultVolume,
+						normalPackages: $normalPackages,
+						hiddenPackages: $hiddenPackages,
+						selectedPackage: $selectedPackage
 					)
 					.id(receipt.packageIdentifier() as! String)
 				} else {
 					ContentUnavailableView(
-						"Select a Package",
+						.localized("Select a Package"),
 						systemImage: "archivebox",
-						description: Text("Choose a package from the sidebar to view details.")
+						description: Text(.localized("Choose a package from the sidebar to view details."))
 					)
 				}
 			}
@@ -102,11 +108,11 @@ struct EGPackageListView: View {
 					Button {
 						isHistoryPresenting = true
 					} label: {
-						Label("History", systemImage: "clock")
+						Label(.localized("History"), systemImage: "clock")
 					}
 					
 					SettingsLink {
-						Label("Settings", systemImage: "gear")
+						Label(.localized("Settings"), systemImage: "gear")
 					}
 				}
 			}
@@ -118,16 +124,21 @@ struct EGPackageListView: View {
 		.onChange(of: showHiddenPackages) { _, _ in
 			loadPackages()
 		}
+		.onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+			Task {
+				await helperManager.manageHelperTool()
+			}
+			loadPackages()
+		}
 		.sheet(isPresented: $isHistoryPresenting) {
 			EGHistoryListView()
 		}
-		.navigationSubtitle("Using PackageKit.framework on macOS \(getMacOSVersion())")
+		.navigationSubtitle(.localized("Using PackageKit.framework on macOS %@", getMacOSVersion()))
 	}
 	
 	// MARK: Load
 	
 	private func loadPackages() {
-		print("loading")
 		let allPackages = EGUtils.receiptsOnVolume(atPath: defaultVolume)
 		
 		normalPackages = allPackages.filter { pkg in
@@ -154,7 +165,7 @@ struct EGPackageListView: View {
 		HStack {
 			EGFileImage()
 			LabeledContent(
-				receipt._packageName() as? String ?? "Unknown",
+				receipt._packageName() as? String ?? .localized("Unknown"),
 				value: "\(receipt.packageVersion()! as! String) • \(receipt.packageIdentifier()! as! String)"
 			)
 			.labeledContentStyle(.vertical)
@@ -165,9 +176,16 @@ struct EGPackageListView: View {
 // MARK: - EGPackageListView (extension): Filter
 extension EGPackageListView {
 	enum PackageFilter: String, CaseIterable, Identifiable {
-		case `default` = "Default"
-		case date = "Date"
+		case `default` = "default"
+		case date = "date"
 		
 		var id: String { rawValue }
+		
+		var localizedName: String {
+			switch self {
+			case .default: return "Default".localized()
+			case .date: return "Date".localized()
+			}
+		}
 	}
 }

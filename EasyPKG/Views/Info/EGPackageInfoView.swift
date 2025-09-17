@@ -9,8 +9,6 @@ import SwiftUI
 
 // MARK: - PackageInfoView
 struct EGPackageInfoView: View {
-	@AppStorage("epkg.defaultVolume") var defaultVolume: String = "/"
-	
 	@State private var prefixPath: String = ""
 	@State private var prefixSeperator: String = ""
 	@State private var receiptInstallPaths: [String] = []
@@ -20,17 +18,20 @@ struct EGPackageInfoView: View {
 	@State private var filePathsView: AnyView? = nil
 	@State private var isAlertPresenting = false
 	@State private var alertTitle = ""
-	@State private var alertMessage = ""
 	
+	@ObservedObject var helperManager: EGHelperManager
 	var receipt: PKReceipt
-	var volume: String
+	@Binding var volume: String
+	@Binding var normalPackages: [PKReceipt]
+	@Binding var hiddenPackages: [PKReceipt]
+	@Binding var selectedPackage: PKReceipt?
 	
 	var body: some View {
 		VStack {
 			VStack(alignment: .leading) {
 				HStack {
 					EGFileImage()
-					Text(receipt._packageName() as? String ?? "Unknown")
+					Text(receipt._packageName() as? String ?? .localized("Unknown"))
 						.font(.largeTitle)
 						.frame(maxWidth: .infinity, alignment: .leading)
 					Spacer()
@@ -39,9 +40,9 @@ struct EGPackageInfoView: View {
 					}
 				}
 				Group {
-					Text("\(receipt.packageVersion()! as! String) • \(receipt.packageIdentifier()! as! String)")
-					Text("Installed on \(receipt.installDate()! as! Date)")
-					Text("Unpackaged at \(prefixPath)")
+					Text(verbatim: "\(receipt.packageVersion()! as! String) • \(receipt.packageIdentifier()! as! String)")
+					Text(verbatim: .localized("Installed on %@", arguments: (receipt.installDate() as! Date).description))
+					Text(.localized("Unpackaged at %@", prefixPath))
 				}
 				.font(.subheadline)
 				.textSelection(.enabled)
@@ -63,42 +64,48 @@ struct EGPackageInfoView: View {
 			
 			HStack {
 				Group {
-					Button("Deselect All") {
+					Button(.localized("Deselect All")) {
 						selectedPaths = []
 					}
 					
 					Spacer()
 					
-					Button("Delete Selected Paths") {
-						do {
-							try deleteFiles(for: selectedPaths)
-						} catch {
-							alertTitle = "Failed to delete \(receipt._packageName() as? String ?? "Unknown")"
-							alertMessage = error.localizedDescription
-							isAlertPresenting = true
+					Button(.localized("Delete Selected Paths")) {
+						helperManager.removeFiles(for: selectedPaths) { success in
+							if !success {
+								alertTitle = "Failed to delete \(receipt._packageName() as? String ?? .localized("Unknown"))"
+								isAlertPresenting = true
+							} else {
+								selectedPaths = []
+							}
 						}
 					}
 					
-					Button("Delete Selected Paths & Forget") {
-						do {
-							try deleteFiles(for: selectedPaths)
-							try receipt.forgetReceipt()
-						} catch {
-							alertTitle = "Failed to delete & forget \(receipt._packageName() as? String ?? "Unknown")"
-							alertMessage = error.localizedDescription
-							isAlertPresenting = true
+					Button(.localized("Delete Selected Paths & Forget")) {
+						helperManager.removeFiles(for: selectedPaths) { success in
+							if !success {
+								alertTitle = "Failed to delete & forget \(receipt._packageName() as? String ?? .localized("Unknown"))"
+								isAlertPresenting = true
+							} else {
+								selectedPaths = []
+								forget(for: receipt) { success in
+									if !success {
+										alertTitle = "Failed to forget \(receipt._packageName() as? String ?? .localized("Unknown"))"
+										isAlertPresenting = true
+									}
+								}
+							}
 						}
 					}
 				}
 				.disabled(selectedPaths.isEmpty)
 				
-				Button("Forget") {
-					do {
-						try receipt.forgetReceipt()
-					} catch {
-						alertTitle = "Failed to forget \(receipt._packageName() as? String ?? "Unknown")"
-						alertMessage = error.localizedDescription
-						isAlertPresenting = true
+				Button(.localized("Forget")) {
+					forget(for: receipt) { success in
+						if !success {
+							alertTitle = "Failed to forget \(receipt._packageName() as? String ?? .localized("Unknown"))"
+							isAlertPresenting = true
+						}
 					}
 				}
 			}
@@ -108,16 +115,11 @@ struct EGPackageInfoView: View {
 			loadData()
 			updatePaths()
 		}
-		.onChange(of: selectedPaths) { oldValue, newValue in
-			dump(selectedPaths)
-		}
 		.sheet(isPresented: $isDescriptivePresenting) {
 			EGPackageDescriptiveInfoView(receipt: receipt, volume: volume)
 		}
 		.alert(alertTitle, isPresented: $isAlertPresenting, actions: {
 			Button("OK", role: .cancel) { }
-		}, message: {
-			Text(alertMessage)
 		})
 		.padding()
 	}
@@ -165,16 +167,18 @@ struct EGPackageInfoView: View {
 		)
 	}
 	
-	// MARK: Helpers
-	
-	private func deleteFiles(for relativePaths: Set<String>) throws {
-		let sortedPaths = relativePaths.sorted {
-			$0.components(separatedBy: "/").count >
-			$1.components(separatedBy: "/").count
-		}
-		
-		for path in sortedPaths {
-			try FileManager.default.removeItem(atPath: path)
+	private func forget(for receipt: PKReceipt, completion: @escaping (Bool) -> Void) {
+		if let p = receipt.receiptStoragePaths() as? [String] {
+			helperManager.removeFiles(for: Set(p)) { success in
+				if success {
+					normalPackages.removeAll { $0 == receipt }
+					hiddenPackages.removeAll { $0 == receipt }
+					selectedPackage = nil
+				}
+				completion(success)
+			}
+		} else {
+			completion(false)
 		}
 	}
 }

@@ -163,16 +163,16 @@ struct EGPackagePathsDisclosureView: View {
 			Text(node.name)
 		}
 		.contextMenu {
-			Button("Reveal in Finder") {
+			Button(.localized("Reveal in Finder")) {
 				EGPathNode.revealInFinder(node: node)
 			}
 			Divider()
 			if selectedPaths.contains(node.path) {
-				Button("Deselect Individually") {
+				Button(.localized("Deselect Individually")) {
 					selectedPaths.remove(node.path)
 				}
 			} else {
-				Button("Select Individually") {
+				Button(.localized("Select Individually")) {
 					selectedPaths.insert(node.path)
 				}
 			}

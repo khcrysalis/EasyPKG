@@ -8,30 +8,89 @@
 
 /* Begin PBXBuildFile section */
 		573164242E779302008C099F /* PackageKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 577759552E709A0D0008867E /* PackageKit.framework */; };
+		573F1C142E7A492300C85B6E /* EasyPKGService in CopyFiles */ = {isa = PBXBuildFile; fileRef = 573F1C0C2E7A48F000C85B6E /* EasyPKGService */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		573F1C0A2E7A48F000C85B6E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		573F1C132E7A491C00C85B6E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				573F1C142E7A492300C85B6E /* EasyPKGService in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		573F1C162E7A4A0600C85B6E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Library/LaunchDaemons;
+			dstSubfolderSpec = 1;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		5731640D2E778FAD008C099F /* easypkg.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = easypkg.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5731640D2E778FAD008C099F /* EasyPKG.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EasyPKG.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		573F1C0C2E7A48F000C85B6E /* EasyPKGService */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = EasyPKGService; sourceTree = BUILT_PRODUCTS_DIR; };
 		577759552E709A0D0008867E /* PackageKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PackageKit.framework; path = ../../../../System/Library/PrivateFrameworks/PackageKit.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		575E3A792E78FF1B009A7842 /* Exceptions for "easypkg" folder in "easypkg" target */ = {
+		573F1C292E7A54BA00C85B6E /* Exceptions for "Shared" folder in "EasyPKGService" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Resources/launch.sh,
+				EGHelperProtocol.swift,
 			);
-			target = 5731640C2E778FAD008C099F /* easypkg */;
+			target = 573F1C0B2E7A48F000C85B6E /* EasyPKGService */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		573F1C182E7A4A0C00C85B6E /* Exceptions for "EasyPKGService" folder in "Copy Files" phase from "EasyPKG" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			attributesByRelativePath = {
+				thewonderofyou.EasyPKG.Helper.plist = (CodeSignOnCopy, );
+			};
+			buildPhase = 573F1C162E7A4A0600C85B6E /* CopyFiles */;
+			membershipExceptions = (
+				thewonderofyou.EasyPKG.Helper.plist,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		5731640E2E778FAD008C099F /* easypkg */ = {
+		5731640E2E778FAD008C099F /* EasyPKG */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = EasyPKG;
+			sourceTree = "<group>";
+		};
+		573F1C0D2E7A48F000C85B6E /* EasyPKGService */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				575E3A792E78FF1B009A7842 /* Exceptions for "easypkg" folder in "easypkg" target */,
+				573F1C182E7A4A0C00C85B6E /* Exceptions for "EasyPKGService" folder in "Copy Files" phase from "EasyPKG" target */,
 			);
-			path = easypkg;
+			path = EasyPKGService;
+			sourceTree = "<group>";
+		};
+		573F1C1E2E7A52BD00C85B6E /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				573F1C292E7A54BA00C85B6E /* Exceptions for "Shared" folder in "EasyPKGService" target */,
+			);
+			path = Shared;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -45,13 +104,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		573F1C092E7A48F000C85B6E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		577759412E7098B80008867E = {
 			isa = PBXGroup;
 			children = (
-				5731640E2E778FAD008C099F /* easypkg */,
+				573F1C1E2E7A52BD00C85B6E /* Shared */,
+				5731640E2E778FAD008C099F /* EasyPKG */,
+				573F1C0D2E7A48F000C85B6E /* EasyPKGService */,
 				577759542E709A0D0008867E /* Frameworks */,
 				5777594B2E7098B80008867E /* Products */,
 			);
@@ -60,7 +128,8 @@
 		5777594B2E7098B80008867E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5731640D2E778FAD008C099F /* easypkg.app */,
+				5731640D2E778FAD008C099F /* EasyPKG.app */,
+				573F1C0C2E7A48F000C85B6E /* EasyPKGService */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -76,27 +145,52 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		5731640C2E778FAD008C099F /* easypkg */ = {
+		5731640C2E778FAD008C099F /* EasyPKG */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 573164192E778FAF008C099F /* Build configuration list for PBXNativeTarget "easypkg" */;
+			buildConfigurationList = 573164192E778FAF008C099F /* Build configuration list for PBXNativeTarget "EasyPKG" */;
 			buildPhases = (
 				573164092E778FAD008C099F /* Sources */,
 				5731640A2E778FAD008C099F /* Frameworks */,
 				5731640B2E778FAD008C099F /* Resources */,
+				573F1C132E7A491C00C85B6E /* CopyFiles */,
+				573F1C162E7A4A0600C85B6E /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				5731640E2E778FAD008C099F /* easypkg */,
+				5731640E2E778FAD008C099F /* EasyPKG */,
+				573F1C1E2E7A52BD00C85B6E /* Shared */,
 			);
-			name = easypkg;
+			name = EasyPKG;
 			packageProductDependencies = (
 			);
 			productName = easypkg;
-			productReference = 5731640D2E778FAD008C099F /* easypkg.app */;
+			productReference = 5731640D2E778FAD008C099F /* EasyPKG.app */;
 			productType = "com.apple.product-type.application";
+		};
+		573F1C0B2E7A48F000C85B6E /* EasyPKGService */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 573F1C102E7A48F000C85B6E /* Build configuration list for PBXNativeTarget "EasyPKGService" */;
+			buildPhases = (
+				573F1C082E7A48F000C85B6E /* Sources */,
+				573F1C092E7A48F000C85B6E /* Frameworks */,
+				573F1C0A2E7A48F000C85B6E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				573F1C0D2E7A48F000C85B6E /* EasyPKGService */,
+			);
+			name = EasyPKGService;
+			packageProductDependencies = (
+			);
+			productName = EasyPKGService;
+			productReference = 573F1C0C2E7A48F000C85B6E /* EasyPKGService */;
+			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
 
@@ -112,9 +206,12 @@
 						CreatedOnToolsVersion = 16.2;
 						LastSwiftMigration = 1620;
 					};
+					573F1C0B2E7A48F000C85B6E = {
+						CreatedOnToolsVersion = 16.2;
+					};
 				};
 			};
-			buildConfigurationList = 577759452E7098B80008867E /* Build configuration list for PBXProject "epkg" */;
+			buildConfigurationList = 577759452E7098B80008867E /* Build configuration list for PBXProject "EasyPKG" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -128,7 +225,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5731640C2E778FAD008C099F /* easypkg */,
+				5731640C2E778FAD008C099F /* EasyPKG */,
+				573F1C0B2E7A48F000C85B6E /* EasyPKGService */,
 			);
 		};
 /* End PBXProject section */
@@ -151,6 +249,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		573F1C082E7A48F000C85B6E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
@@ -160,10 +265,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = "easypkg/Supporting Files/easypkg.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "EasyPKG/Supporting Files/easypkg.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 95J8WZ4TN8;
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = EasyPKG;
@@ -172,11 +279,12 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				LOCALIZED_STRING_SWIFTUI_SUPPORT = NO;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = thewonderofyou.easypkg;
+				PRODUCT_BUNDLE_IDENTIFIER = thewonderofyou.EasyPKG;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "easypkg/Supporting Files/easypkg-Bridging-Header.h";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "EasyPKG/Supporting Files/easypkg-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				SYSTEM_FRAMEWORK_SEARCH_PATHS = (
@@ -192,10 +300,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = "easypkg/Supporting Files/easypkg.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "EasyPKG/Supporting Files/easypkg.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 95J8WZ4TN8;
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = EasyPKG;
@@ -204,16 +314,45 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				LOCALIZED_STRING_SWIFTUI_SUPPORT = NO;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = thewonderofyou.easypkg;
+				PRODUCT_BUNDLE_IDENTIFIER = thewonderofyou.EasyPKG;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "easypkg/Supporting Files/easypkg-Bridging-Header.h";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "EasyPKG/Supporting Files/easypkg-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				SYSTEM_FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
 				);
+			};
+			name = Release;
+		};
+		573F1C112E7A48F000C85B6E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 95J8WZ4TN8;
+				ENABLE_HARDENED_RUNTIME = YES;
+				LOCALIZED_STRING_SWIFTUI_SUPPORT = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = thewonderofyou.EasyPKG.Helper;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		573F1C122E7A48F000C85B6E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 95J8WZ4TN8;
+				ENABLE_HARDENED_RUNTIME = YES;
+				LOCALIZED_STRING_SWIFTUI_SUPPORT = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = thewonderofyou.EasyPKG.Helper;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -276,6 +415,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -332,13 +472,14 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		573164192E778FAF008C099F /* Build configuration list for PBXNativeTarget "easypkg" */ = {
+		573164192E778FAF008C099F /* Build configuration list for PBXNativeTarget "EasyPKG" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5731641A2E778FAF008C099F /* Debug */,
@@ -347,7 +488,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		577759452E7098B80008867E /* Build configuration list for PBXProject "epkg" */ = {
+		573F1C102E7A48F000C85B6E /* Build configuration list for PBXNativeTarget "EasyPKGService" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				573F1C112E7A48F000C85B6E /* Debug */,
+				573F1C122E7A48F000C85B6E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		577759452E7098B80008867E /* Build configuration list for PBXProject "EasyPKG" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5777594F2E7098B80008867E /* Debug */,

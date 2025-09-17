@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import ServiceManagement
 
 // MARK: - EGSettingsView
 struct EGSettingsView: View {
+	@ObservedObject private var helperToolManager = EGHelperManager()
 	@AppStorage("epkg.defaultVolume") var defaultVolume: String = "/"
 	@AppStorage("epkg.showHiddenPackages") var showHiddenPackages: Bool = false
 	
@@ -18,18 +20,43 @@ struct EGSettingsView: View {
 	
 	var body: some View {
 		Form {
-			Section {
-				Toggle("Show Hidden Packages", isOn: $showHiddenPackages)
+			Section(.localized("Helper")) {
+				LabeledContent(.localized("Status"), value: helperToolManager.status)
+				HStack {
+					Button(.localized("Open Settings...")) {
+						SMAppService.openSystemSettingsLoginItems()
+					}
+					
+					Spacer()
+					
+					if !helperToolManager.isHelperToolInstalled {
+						Button(.localized("Register")) {
+							Task {
+								await helperToolManager.manageHelperTool(action: .install)
+							}
+						}
+					} else {
+						Button(.localized("Unregister")) {
+							Task {
+								await helperToolManager.manageHelperTool(action: .uninstall)
+							}
+						}
+					}
+				}
 			}
 			
-			Section {
-				Picker("Default Volume", selection: $defaultVolume) {
+			Section(.localized("General")) {
+				Toggle(.localized("Show Hidden Packages"), isOn: $showHiddenPackages)
+			}
+			
+			Section(.localized("Listings")) {
+				Picker(.localized("Default Volume"), selection: $defaultVolume) {
 					ForEach(volumes, id: \.self) { volume in
 						Text(volume).tag(volume)
 					}
 				}
 				
-				Button("Reset to Defaults") {
+				Button(.localized("Reset to Defaults")) {
 					showHiddenPackages = false
 					defaultVolume = "/"
 				}

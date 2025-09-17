@@ -12,6 +12,50 @@
         }
       }
     },
+    "Are you sure you want to delete the selected files?" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure you want to delete the selected files?"
+          }
+        }
+      }
+    },
+    "Are you sure you want to forget this package and delete selected files?" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure you want to forget this package and delete selected files?"
+          }
+        }
+      }
+    },
+    "Are you sure you want to forget this package?" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure you want to forget this package?"
+          }
+        }
+      }
+    },
+    "Cancel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        }
+      }
+    },
     "Choose a package from the sidebar to view details." : {
       "extractionState" : "manual",
       "localizations" : {

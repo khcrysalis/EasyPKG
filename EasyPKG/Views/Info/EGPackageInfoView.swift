@@ -16,6 +16,10 @@ struct EGPackageInfoView: View {
 	@State private var expandedNodes: Set<UUID> = []
 	@State private var isDescriptivePresenting: Bool = false
 	@State private var filePathsView: AnyView? = nil
+	
+	@State private var isDeleteAlertPresenting = false
+	@State private var isForgetDeleteAlertPresenting = false
+	@State private var isForgetAlertPresenting = false
 	@State private var isAlertPresenting = false
 	@State private var alertTitle = ""
 	
@@ -71,42 +75,17 @@ struct EGPackageInfoView: View {
 					Spacer()
 					
 					Button(.localized("Delete Selected Paths")) {
-						helperManager.removeFiles(for: selectedPaths) { success in
-							if !success {
-								alertTitle = "Failed to delete \(receipt._packageName() as? String ?? .localized("Unknown"))"
-								isAlertPresenting = true
-							} else {
-								selectedPaths = []
-							}
-						}
+						isDeleteAlertPresenting = true
 					}
 					
 					Button(.localized("Delete Selected Paths & Forget")) {
-						helperManager.removeFiles(for: selectedPaths) { success in
-							if !success {
-								alertTitle = "Failed to delete & forget \(receipt._packageName() as? String ?? .localized("Unknown"))"
-								isAlertPresenting = true
-							} else {
-								selectedPaths = []
-								forget(for: receipt) { success in
-									if !success {
-										alertTitle = "Failed to forget \(receipt._packageName() as? String ?? .localized("Unknown"))"
-										isAlertPresenting = true
-									}
-								}
-							}
-						}
+						isForgetDeleteAlertPresenting = true
 					}
 				}
 				.disabled(selectedPaths.isEmpty)
 				
 				Button(.localized("Forget")) {
-					forget(for: receipt) { success in
-						if !success {
-							alertTitle = "Failed to forget \(receipt._packageName() as? String ?? .localized("Unknown"))"
-							isAlertPresenting = true
-						}
-					}
+					isForgetAlertPresenting = true
 				}
 			}
 		}
@@ -121,6 +100,49 @@ struct EGPackageInfoView: View {
 		.alert(alertTitle, isPresented: $isAlertPresenting, actions: {
 			Button("OK", role: .cancel) { }
 		})
+		.alert(.localized("Are you sure you want to delete the selected files?"), isPresented: $isDeleteAlertPresenting) {
+			Button(.localized("Delete Selected Paths"), role: .destructive) {
+				helperManager.removeFiles(for: selectedPaths) { success in
+					if !success {
+						alertTitle = "Failed to delete \(receipt._packageName() as? String ?? .localized("Unknown"))"
+						isAlertPresenting = true
+					} else {
+						selectedPaths = []
+					}
+				}
+			}
+			Button(.localized("Cancel"), role: .cancel) { }
+		}
+		.alert(.localized("Are you sure you want to forget this package and delete selected files?"), isPresented: $isForgetDeleteAlertPresenting) {
+			Button(.localized("Delete Selected Paths & Forget"), role: .destructive) {
+				helperManager.removeFiles(for: selectedPaths) { success in
+					if !success {
+						alertTitle = "Failed to delete & forget \(receipt._packageName() as? String ?? .localized("Unknown"))"
+						isAlertPresenting = true
+					} else {
+						selectedPaths = []
+						forget(for: receipt) { success in
+							if !success {
+								alertTitle = "Failed to forget \(receipt._packageName() as? String ?? .localized("Unknown"))"
+								isAlertPresenting = true
+							}
+						}
+					}
+				}
+			}
+			Button(.localized("Cancel"), role: .cancel) { }
+		}
+		.alert(.localized("Are you sure you want to forget this package?"), isPresented: $isForgetAlertPresenting) {
+			Button(.localized("Forget"), role: .destructive) {
+				forget(for: receipt) { success in
+					if !success {
+						alertTitle = "Failed to forget \(receipt._packageName() as? String ?? .localized("Unknown"))"
+						isAlertPresenting = true
+					}
+				}
+			}
+			Button(.localized("Cancel"), role: .cancel) { }
+		}
 		.padding()
 	}
 	

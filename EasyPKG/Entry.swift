@@ -16,8 +16,7 @@ import SwiftUI
 			EGPackageListView()
 		}
 		Settings {
-			EGSettingsView()
-				.frame(width: 450, height: 500)
+			EGSettingsView().frame(width: 450, height: 500)
 		}
 	}
 }

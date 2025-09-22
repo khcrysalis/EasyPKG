@@ -64,6 +64,31 @@ struct EGPathNode: Identifiable {
 		FileManager.default.fileExists(atPath: node.path)
 	}
 	
+	static func isDisabled(node: EGPathNode) -> Bool {
+		let defaultVolume = UserDefaults.standard.string(forKey: "epkg.defaultVolume") ?? "/"
+		let normalizedDefault = (defaultVolume as NSString).standardizingPath
+		
+		let disallowedSuffixes = [
+			"", // root
+			"Applications",
+			"Library",
+			"Library/Apple",
+			"Library/Apple/System",
+			"Library/Apple/System/CoreServices",
+			"Library/Fonts",
+			"Library/Developer",
+			"private/var",
+			"private/var/db"
+		]
+		
+		let disallowed = disallowedSuffixes.map { suffix in
+			((normalizedDefault as NSString).appendingPathComponent(suffix) as NSString).standardizingPath
+		}
+		
+		let nodePath = (node.path as NSString).standardizingPath
+		return disallowed.contains(nodePath)
+	}
+	
 	static func revealInFinder(node: EGPathNode) {
 		NSWorkspace.shared.activateFileViewerSelecting([URL(fileURLWithPath: node.path)])
 	}
@@ -89,7 +114,7 @@ struct EGPackagePathsDisclosureView: View {
 			}
 		)
 		
-		let isEnabled = EGPathNode.pathExists(node: node)
+		let isEnabled = EGPathNode.pathExists(node: node) && !EGPathNode.isDisabled(node: node)
 		
 		if node.children.isEmpty {
 			Toggle(isOn: Binding(
@@ -118,8 +143,8 @@ struct EGPackagePathsDisclosureView: View {
 					fileRow(for: node)
 				}
 				.toggleStyle(.checkbox)
+				.disabled(!isEnabled)
 			}
-			.disabled(!isEnabled)
 		}
 	}
 	

@@ -1,0 +1,82 @@
+name: Create New Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Dependencies
+        run: |
+          brew install create-dmg
+
+      - name: Certificates
+        uses: apple-actions/import-codesign-certs@v5
+        with:
+          p12-file-base64: ${{ secrets.DEV_ID_P12_BASE64 }}
+          p12-password: ${{ secrets.DEV_ID_P12_PASSWORD }}
+
+      - name: Xcode 16.4
+        run: |
+          sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer
+
+      - name: Build
+        run: |
+          make
+
+      - name: Codesign
+        run: |
+          codesign --deep --force --options runtime --sign "${{ secrets.DEV_ID_IDENTITY_NAME }}" packages/EasyPKG.app
+          ln -s /Applications packages/Applications
+          create-dmg EasyPKG.dmg packages
+
+      - name: Notarize
+        run: |
+          xcrun notarytool submit EasyPKG.dmg --apple-id "${{ secrets.APPLE_ID_EMAIL }}" --password "${{ secrets.APPLE_ID_PASSWORD }}" --team-id "${{ secrets.APPLE_ID_TEAM }}" --wait
+          xcrun stapler staple EasyPKG.dmg
+          
+      - name: Version
+        id: get_version
+        run: |
+          VERSION=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" packages/*.app/Contents/Info.plist)
+          PUBDATE=$(date +"%a, %d %b %Y %H:%M:%S %z")
+          cat > appcast.xml <<EOF
+          <?xml version="1.0" standalone="yes"?>
+          <rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+            <channel>
+              <title>EasyPKG</title>
+              <item>
+                <title>${VERSION}</title>
+                <pubDate>${PUBDATE}</pubDate>
+                <sparkle:version>1</sparkle:version>
+                <sparkle:shortVersionString>${VERSION}</sparkle:shortVersionString>
+                <sparkle:minimumSystemVersion>15.2</sparkle:minimumSystemVersion>
+                <enclosure url="https://github.com/khcrysalis/EasyPKG/releases/latest/download/EasyPKG.dmg" length="$(stat -f%z EasyPKG.dmg)" type="application/octet-stream"/>
+              </item>
+            </channel>
+          </rss>
+          EOF
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+
+      - name: Draft
+        uses: softprops/action-gh-release@v2
+        with:
+          name: EasyPKG v${{ env.VERSION }}
+          tag_name: v${{ env.VERSION }}
+          files: |
+            EasyPKG.dmg
+            appcast.xml
+          body: |
+            > [!WARNING]
+            > Some of the actions in this app can also be considered dangerous, only delete whats necessary, and not entire drives, you've been warned.
+            
+            ## What's Changed
+          generate_release_notes: false
+          fail_on_unmatched_files: true
+          draft: true
+        env:
+          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}

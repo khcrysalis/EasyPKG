@@ -13,7 +13,7 @@ import Sparkle
 // MARK: - easypkgApp
 @main struct Entry: App {
 	@NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate	
-	
+
 	var body: some Scene {
 		WindowGroup {
 			EGPackageListView()
@@ -33,6 +33,12 @@ import Sparkle
 
 // MARK: - AppDelegate
 class AppDelegate: NSObject, NSApplicationDelegate {
+	func applicationDidFinishLaunching(_ notification: Notification) {
+		#if !DEBUG
+		_ = AppDelegate.updaterController
+		#endif
+	}
+	
 	func applicationShouldTerminateAfterLastWindowClosed(
 		_ sender: NSApplication
 	) -> Bool {

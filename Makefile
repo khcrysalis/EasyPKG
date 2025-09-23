@@ -30,7 +30,6 @@ $(SCHEMES):
 
 	@mkdir -p packages
 	@cp -R $(STAGE)/$@.app packages/
-	@zip -r packages/$(NAME).zip packages/$@.app
 
 clean:
 	@rm -rf packages

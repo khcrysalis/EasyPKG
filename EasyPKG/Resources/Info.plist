@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SUPublicEDKey</key>
+	<string>0jcLch5+zoYsVnfx2/MJGz0skKio2cLP7JsYCGzzpFA=</string>
+	<key>SUFeedURL</key>
+	<string>https://github.com/khcrysalis/EasyPKG/releases/latest/download/appcast.xml</string>
+	<key>SUEnableInstallerLauncherService</key>
+	<true/>
+	<key>SUEnableDownloaderService</key>
+	<true/>
+</dict>
+</plist>

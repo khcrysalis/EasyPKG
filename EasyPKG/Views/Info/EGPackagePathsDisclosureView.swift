@@ -119,9 +119,9 @@ struct EGPackagePathsDisclosureView: View {
 		if node.children.isEmpty {
 			Toggle(isOn: Binding(
 				get: { selectedPaths.contains(node.path) },
-				set: { isOn in updateSelection(node: node, select: isOn) }
+				set: { isOn in _updateSelection(node: node, select: isOn) }
 			)) {
-				fileRow(for: node)
+				_fileRow(for: node)
 			}
 			.toggleStyle(.checkbox)
 			.disabled(!isEnabled)
@@ -138,9 +138,9 @@ struct EGPackagePathsDisclosureView: View {
 			} label: {
 				Toggle(isOn: Binding(
 					get: { selectedPaths.contains(node.path) },
-					set: { isOn in updateSelection(node: node, select: isOn) }
+					set: { isOn in _updateSelection(node: node, select: isOn) }
 				)) {
-					fileRow(for: node)
+					_fileRow(for: node)
 				}
 				.toggleStyle(.checkbox)
 				.disabled(!isEnabled)
@@ -150,23 +150,23 @@ struct EGPackagePathsDisclosureView: View {
 	
 	// MARK: Helpers
 	
-	private func updateSelection(node: EGPathNode, select: Bool) {
+	private func _updateSelection(node: EGPathNode, select: Bool) {
 		if select {
-			selectedPaths.formUnion(existingPaths(in: node))
+			selectedPaths.formUnion(_existingPaths(in: node))
 		} else {
-			selectedPaths.subtract(allPaths(in: node))
+			selectedPaths.subtract(_allPaths(in: node))
 		}
 	}
 
-	private func allPaths(in node: EGPathNode) -> Set<String> {
+	private func _allPaths(in node: EGPathNode) -> Set<String> {
 		var paths: Set<String> = [node.path]
 		for child in node.children {
-			paths.formUnion(allPaths(in: child))
+			paths.formUnion(_allPaths(in: child))
 		}
 		return paths
 	}
 
-	private func existingPaths(in node: EGPathNode) -> Set<String> {
+	private func _existingPaths(in node: EGPathNode) -> Set<String> {
 		var paths: Set<String> = []
 		
 		if EGPathNode.pathExists(node: node) {
@@ -174,7 +174,7 @@ struct EGPackagePathsDisclosureView: View {
 		}
 		
 		for child in node.children {
-			paths.formUnion(existingPaths(in: child))
+			paths.formUnion(_existingPaths(in: child))
 		}
 		
 		return paths
@@ -182,7 +182,7 @@ struct EGPackagePathsDisclosureView: View {
 	
 	// MARK: Builders
 	
-	private func fileRow(for node: EGPathNode) -> some View {
+	private func _fileRow(for node: EGPathNode) -> some View {
 		HStack {
 			EGFileImage(path: node.path, size: 16)
 			Text(node.name)

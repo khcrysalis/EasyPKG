@@ -86,7 +86,7 @@ extension EGHelperManager {
 		isHelperToolInstalled = (service.status == .enabled)
 	}
 	
-	private func getConnection() -> NSXPCConnection? {
+	private func _getConnection() -> NSXPCConnection? {
 		if let connection = helperConnection {
 			return connection
 		}
@@ -136,7 +136,7 @@ extension EGHelperManager: @preconcurrency EGHelperProtocol {
 	func removeFiles(for relativePaths: Set<String>, reply: @escaping (Bool) -> Void) {
 		guard
 			isHelperToolInstalled,
-			let connection = getConnection(),
+			let connection = _getConnection(),
 			let proxy = connection.remoteObjectProxyWithErrorHandler({ error in
 				print("XPC error: \(error)")
 				reply(false)

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		573164242E779302008C099F /* PackageKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 577759552E709A0D0008867E /* PackageKit.framework */; };
 		573F1C142E7A492300C85B6E /* EasyPKGService in CopyFiles */ = {isa = PBXBuildFile; fileRef = 573F1C0C2E7A48F000C85B6E /* EasyPKGService */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		576F3CEA2E81BD4E00DB11EA /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 576F3CE92E81BD4E00DB11EA /* Sparkle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -56,6 +57,13 @@
 			);
 			target = 573F1C0B2E7A48F000C85B6E /* EasyPKGService */;
 		};
+		576F3CEC2E81BDCB00DB11EA /* Exceptions for "EasyPKG" folder in "EasyPKG" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/Info.plist,
+			);
+			target = 5731640C2E778FAD008C099F /* EasyPKG */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
@@ -74,6 +82,9 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5731640E2E778FAD008C099F /* EasyPKG */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				576F3CEC2E81BDCB00DB11EA /* Exceptions for "EasyPKG" folder in "EasyPKG" target */,
+			);
 			path = EasyPKG;
 			sourceTree = "<group>";
 		};
@@ -101,6 +112,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				573164242E779302008C099F /* PackageKit.framework in Frameworks */,
+				576F3CEA2E81BD4E00DB11EA /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -165,6 +177,7 @@
 			);
 			name = EasyPKG;
 			packageProductDependencies = (
+				576F3CE92E81BD4E00DB11EA /* Sparkle */,
 			);
 			productName = easypkg;
 			productReference = 5731640D2E778FAD008C099F /* EasyPKG.app */;
@@ -220,6 +233,9 @@
 			);
 			mainGroup = 577759412E7098B80008867E;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				576F3CE82E81BD4E00DB11EA /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5777594B2E7098B80008867E /* Products */;
 			projectDirPath = "";
@@ -273,6 +289,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EasyPKG/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = EasyPKG;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -309,6 +326,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EasyPKG/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = EasyPKG;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -511,6 +529,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		576F3CE82E81BD4E00DB11EA /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.8.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		576F3CE92E81BD4E00DB11EA /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 576F3CE82E81BD4E00DB11EA /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 577759422E7098B80008867E /* Project object */;
 }

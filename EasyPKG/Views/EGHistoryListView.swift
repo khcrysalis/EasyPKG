@@ -9,14 +9,12 @@ import SwiftUI
 
 // MARK: - HistoryListView
 struct EGHistoryListView: View {
-	@Environment(\.dismiss) private var dismiss
+	@Environment(\.dismiss) private var _dismiss
+	@AppStorage("epkg.defaultVolume") private var _defaultVolume: String = "/"
 	
-	@AppStorage("epkg.defaultVolume") var defaultVolume: String = "/"
-	
-	@State private var historyItems: [EGUtils.HistoryItem] = []
-	
-	private var groupedHistory: [Date: [EGUtils.HistoryItem]] {
-		Dictionary(grouping: historyItems) { item in
+	@State private var _historyItems: [EGUtils.HistoryItem] = []
+	private var _groupedHistory: [Date: [EGUtils.HistoryItem]] {
+		Dictionary(grouping: _historyItems) { item in
 			Calendar.current.startOfDay(for: item.date)
 		}
 	}
@@ -26,9 +24,9 @@ struct EGHistoryListView: View {
 	var body: some View {
 		NavigationStack {
 			List {
-				ForEach(groupedHistory.keys.sorted(by: >), id: \.self) { day in
+				ForEach(_groupedHistory.keys.sorted(by: >), id: \.self) { day in
 					Section(header: Text(day, style: .date)) {
-						ForEach(groupedHistory[day] ?? []) { item in
+						ForEach(_groupedHistory[day] ?? []) { item in
 							HStack {
 								EGFileImage()
 								LabeledContent(
@@ -47,19 +45,19 @@ struct EGHistoryListView: View {
 			.toolbar {
 				ToolbarItem(placement: .cancellationAction) {
 					Button {
-						dismiss()
+						_dismiss()
 					} label: {
 						Text(.localized("Close"))
 					}
 				}
 			}
-			.onAppear(perform: loadHistory)
+			.onAppear(perform: _loadHistory)
 		}
 	}
 	
 	// MARK: Load
 	
-	private func loadHistory() {
-		self.historyItems = EGUtils.receiptHistoryOnVolume(atPath: defaultVolume)
+	private func _loadHistory() {
+		self._historyItems = EGUtils.receiptHistoryOnVolume(atPath: _defaultVolume)
 	}
 }

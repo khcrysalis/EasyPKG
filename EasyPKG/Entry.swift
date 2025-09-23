@@ -6,14 +6,24 @@
 //
 
 import SwiftUI
+#if !DEBUG
+import Sparkle
+#endif
 
 // MARK: - easypkgApp
 @main struct Entry: App {
-	@NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+	@NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate	
 	
 	var body: some Scene {
 		WindowGroup {
 			EGPackageListView()
+		}
+		.commands {
+			#if !DEBUG
+			CommandGroup(after: .appInfo) {
+				GBCheckForUpdatesButton(updater: AppDelegate.updaterController.updater)
+			}
+			#endif
 		}
 		Settings {
 			EGSettingsView().frame(width: 450, height: 500)
@@ -28,4 +38,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	) -> Bool {
 		true
 	}
+	
+	#if !DEBUG
+	static let updaterController: SPUStandardUpdaterController = {
+		SPUStandardUpdaterController(
+			startingUpdater: true, 
+			updaterDelegate: nil, 
+			userDriverDelegate: nil
+		)
+	}()
+	#endif
 }

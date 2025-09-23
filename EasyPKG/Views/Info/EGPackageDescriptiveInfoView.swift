@@ -10,7 +10,7 @@ import SwiftUI
 
 // MARK: - EGPackageDescriptiveInfoView
 struct EGPackageDescriptiveInfoView: View {
-	@Environment(\.dismiss) private var dismiss
+	@Environment(\.dismiss) private var _dismiss
 	
 	var receipt: PKReceipt
 	var volume: String
@@ -81,7 +81,7 @@ struct EGPackageDescriptiveInfoView: View {
 			.toolbar {
 				ToolbarItem(placement: .cancellationAction) {
 					Button {
-						dismiss()
+						_dismiss()
 					} label: {
 						Text(.localized("Close"))
 					}

@@ -9,19 +9,18 @@ import SwiftUI
 
 // MARK: - PackageListView
 struct EGPackageListView: View {
-	@StateObject private var helperManager = EGHelperManager()
+	@StateObject private var _helperManager = EGHelperManager()
+	@AppStorage("epkg.defaultVolume") private var _defaultVolume: String = "/"
+	@AppStorage("epkg.showHiddenPackages") private var _showHiddenPackages: Bool = false
 	
-	@AppStorage("epkg.defaultVolume") var defaultVolume: String = "/"
-	@AppStorage("epkg.showHiddenPackages") var showHiddenPackages: Bool = false
+	@State private var _selectedFilter: PackageFilter = .default
+	@State private var _normalPackages: [PKReceipt] = []
+	@State private var _hiddenPackages: [PKReceipt] = []
+	@State private var _selectedPackage: PKReceipt? = nil
+	@State private var _isHistoryPresenting: Bool = false
 	
-	@State private var selectedFilter: PackageFilter = .default
-	@State private var normalPackages: [PKReceipt] = []
-	@State private var hiddenPackages: [PKReceipt] = []
-	@State private var selectedPackage: PKReceipt? = nil
-	@State private var isHistoryPresenting: Bool = false
-	
-	private var groupedByDate: [(day: Date, packages: [PKReceipt])] {
-		let all = normalPackages + (showHiddenPackages ? hiddenPackages : [])
+	private var _groupedByDate: [(day: Date, packages: [PKReceipt])] {
+		let all = _normalPackages + (_showHiddenPackages ? _hiddenPackages : [])
 		
 		let grouped = Dictionary(grouping: all) { pkg -> Date in
 			if let date = pkg.installDate() as? Date {
@@ -39,32 +38,32 @@ struct EGPackageListView: View {
 	
 	var body: some View {
 		NavigationSplitView {
-			List(selection: $selectedPackage) {
-				if selectedFilter == .default {
+			List(selection: $_selectedPackage) {
+				if _selectedFilter == .default {
 					Section(.localized("Installed Packages")) {
-						ForEach(normalPackages, id: \.self) { receipt in
+						ForEach(_normalPackages, id: \.self) { receipt in
 							NavigationLink(value: receipt) {
-								packageRow(receipt)
+								_packageRow(receipt)
 							}
 						}
 					}
 					
-					if showHiddenPackages {
+					if _showHiddenPackages {
 						Section(.localized("Hidden Installed Packages")) {
-							ForEach(hiddenPackages, id: \.self) { receipt in
+							ForEach(_hiddenPackages, id: \.self) { receipt in
 								NavigationLink(value: receipt) {
-									packageRow(receipt)
+									_packageRow(receipt)
 								}
 							}
 						}
 					}
 				}
 				
-				if selectedFilter == .date {
-					ForEach(groupedByDate, id: \.day) { group in
+				if _selectedFilter == .date {
+					ForEach(_groupedByDate, id: \.day) { group in
 						Section(header: Text(group.day, style: .date)) {
 							ForEach(group.packages, id: \.self) { receipt in
-								packageRow(receipt)
+								_packageRow(receipt)
 							}
 						}
 					}
@@ -74,7 +73,7 @@ struct EGPackageListView: View {
 			.listStyle(.sidebar)
 			.toolbar {
 				ToolbarItemGroup {
-					Picker(.localized("Filter"), selection: $selectedFilter) {
+					Picker(.localized("Filter"), selection: $_selectedFilter) {
 						ForEach(PackageFilter.allCases) { filter in
 							Text(filter.localizedName).tag(filter)
 						}
@@ -85,14 +84,14 @@ struct EGPackageListView: View {
 			}
 		} detail: {
 			Group {
-				if let receipt = selectedPackage {
+				if let receipt = _selectedPackage {
 					EGPackageInfoView(
-						helperManager: helperManager,
+						helperManager: _helperManager,
 						receipt: receipt,
-						volume: $defaultVolume,
-						normalPackages: $normalPackages,
-						hiddenPackages: $hiddenPackages,
-						selectedPackage: $selectedPackage
+						volume: $_defaultVolume,
+						normalPackages: $_normalPackages,
+						hiddenPackages: $_hiddenPackages,
+						selectedPackage: $_selectedPackage
 					)
 					.id(receipt.packageIdentifier() as! String)
 				} else {
@@ -106,7 +105,7 @@ struct EGPackageListView: View {
 			.toolbar {
 				ToolbarItemGroup {
 					Button {
-						isHistoryPresenting = true
+						_isHistoryPresenting = true
 					} label: {
 						Label(.localized("History"), systemImage: "clock")
 					}
@@ -117,20 +116,20 @@ struct EGPackageListView: View {
 				}
 			}
 		}
-		.onAppear(perform: loadPackages)
-		.onChange(of: defaultVolume) { _, _ in
-			loadPackages()
+		.onAppear(perform: _loadPackages)
+		.onChange(of: _defaultVolume) { _, _ in
+			_loadPackages()
 		}
-		.onChange(of: showHiddenPackages) { _, _ in
-			loadPackages()
+		.onChange(of: _showHiddenPackages) { _, _ in
+			_loadPackages()
 		}
 		.onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
 			Task {
-				await helperManager.manageHelperTool()
+				await _helperManager.manageHelperTool()
 			}
-			loadPackages()
+			_loadPackages()
 		}
-		.sheet(isPresented: $isHistoryPresenting) {
+		.sheet(isPresented: $_isHistoryPresenting) {
 			EGHistoryListView()
 		}
 		.navigationSubtitle(.localized("Using PackageKit.framework on macOS %@", getMacOSVersion()))
@@ -138,15 +137,15 @@ struct EGPackageListView: View {
 	
 	// MARK: Load
 	
-	private func loadPackages() {
-		let allPackages = EGUtils.receiptsOnVolume(atPath: defaultVolume)
+	private func _loadPackages() {
+		let allPackages = EGUtils.receiptsOnVolume(atPath: _defaultVolume)
 		
-		normalPackages = allPackages.filter { pkg in
+		_normalPackages = allPackages.filter { pkg in
 			guard let id = pkg.packageIdentifier() as? String else { return false }
 			return !EGUtils.hiddenPackageIdentifiers().contains { hidden in id.contains(hidden) }
 		}
 		
-		hiddenPackages = allPackages.filter { pkg in
+		_hiddenPackages = allPackages.filter { pkg in
 			guard let id = pkg.packageIdentifier() as? String else { return false }
 			return EGUtils.hiddenPackageIdentifiers().contains { hidden in id.contains(hidden) }
 		}
@@ -161,7 +160,7 @@ struct EGPackageListView: View {
 	
 	// MARK: Builders
 	
-	private func packageRow(_ receipt: PKReceipt) -> some View {
+	private func _packageRow(_ receipt: PKReceipt) -> some View {
 		HStack {
 			EGFileImage()
 			LabeledContent(

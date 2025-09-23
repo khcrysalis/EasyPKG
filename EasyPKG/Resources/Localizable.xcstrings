@@ -56,6 +56,17 @@
         }
       }
     },
+    "Check for Updates..." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check for Updates..."
+          }
+        }
+      }
+    },
     "Choose a package from the sidebar to view details." : {
       "extractionState" : "manual",
       "localizations" : {

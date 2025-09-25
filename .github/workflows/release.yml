@@ -28,39 +28,31 @@ jobs:
         run: |
           make
 
-      - name: Codesign
+      - name: Codesign & Notarize
         run: |
           codesign --deep --force --options runtime --sign "${{ secrets.DEV_ID_IDENTITY_NAME }}" packages/EasyPKG.app
           ln -s /Applications packages/Applications
           create-dmg EasyPKG.dmg packages
-
-      - name: Notarize
-        run: |
           xcrun notarytool submit EasyPKG.dmg --apple-id "${{ secrets.APPLE_ID_EMAIL }}" --password "${{ secrets.APPLE_ID_PASSWORD }}" --team-id "${{ secrets.APPLE_ID_TEAM }}" --wait
           xcrun stapler staple EasyPKG.dmg
-          
-      - name: Version
+
+      - name: Setup Sparkle
         id: get_version
         run: |
+          curl -L -o Sparkle-2.4.2.tar.xz https://github.com/sparkle-project/Sparkle/releases/download/2.8.0/Sparkle-2.8.0.tar.xz
+          tar -xJf Sparkle-2.4.2.tar.xz
+          mkdir update
+          mv EasyPKG.dmg update/
+          chmod +x ./bin/generate_appcast
+                    
           VERSION=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" packages/*.app/Contents/Info.plist)
-          PUBDATE=$(date +"%a, %d %b %Y %H:%M:%S %z")
-          cat > appcast.xml <<EOF
-          <?xml version="1.0" standalone="yes"?>
-          <rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
-            <channel>
-              <title>EasyPKG</title>
-              <item>
-                <title>${VERSION}</title>
-                <pubDate>${PUBDATE}</pubDate>
-                <sparkle:version>1</sparkle:version>
-                <sparkle:shortVersionString>${VERSION}</sparkle:shortVersionString>
-                <sparkle:minimumSystemVersion>15.2</sparkle:minimumSystemVersion>
-                <enclosure url="https://github.com/khcrysalis/EasyPKG/releases/latest/download/EasyPKG.dmg" length="$(stat -f%z EasyPKG.dmg)" type="application/octet-stream"/>
-              </item>
-            </channel>
-          </rss>
-          EOF
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
+
+      - name: Make Appcast
+        run: |
+          echo "$SPARKLE_PRIVATE_KEY" | ./bin/generate_appcast --ed-key-file - --download-url-prefix https://github.com/khcrysalis/EasyPKG/releases/latest/download/ update/
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
 
       - name: Draft
         uses: softprops/action-gh-release@v2
@@ -68,8 +60,8 @@ jobs:
           name: EasyPKG v${{ env.VERSION }}
           tag_name: v${{ env.VERSION }}
           files: |
-            EasyPKG.dmg
-            appcast.xml
+            update/EasyPKG.dmg
+            update/appcast.xml
           body: |
             > [!WARNING]
             > Some of the actions in this app can also be considered dangerous, only delete whats necessary, and not entire drives, you've been warned.

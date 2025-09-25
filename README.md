@@ -3,10 +3,17 @@
 [![GitHub License](https://img.shields.io/github/license/khcrysalis/EasyPKG?color=%23C96FAD)](https://github.com/khcrysalis/EasyPKG/blob/main/LICENSE)
 [![Sponsor Me](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/khcrysalis)
 
-| ![EPKG Demo](image.png) |
+| ![EPKG Demo](demo.png) |
 | :---------------------: |
 
 macOS Application that dives into Apple's PackageKit.framework private framework, this lists installed packages (.pkg) from specified volumes and lists your package overall history.
+
+## Download
+
+> [!WARNING]
+> Some of the actions in this app can also be considered dangerous, only delete whats neccessary, and not entire drives, you've been warned.
+
+Visit [releases](https://github.com/khcrysalis/EasyPKG/releases) and get the latest `.dmg`.
 
 ## Limitations
 Due to how the package files work, there's no way for you to properly uninstall these packages. Presumably you're not supposed to manage these packages and they're supposed to be a one-time-install thing that you don't bat an eye about. 
@@ -29,12 +36,12 @@ Certain packages like Rosetta will only be deletable via Recovery, you can still
 | `com.apple.pkg.XcodeSystemResources`        | Xcode Resources, mainly for Simulator                                                               |
 | `com.apple.pkg.MobileDeviceDevelopment`     | [Mobile Packet Tracing](https://developer.apple.com/documentation/network/recording-a-packet-trace) |
 
-## Download
+## Sponsors
 
-> [!WARNING]
-> Some of the actions in this app can also be considered dangerous, only delete whats neccessary, and not entire drives, you've been warned.
-
-Visit [releases](https://github.com/khcrysalis/EasyPKG/releases) and get the latest `.dmg`.
+| Thanks to all my [sponsors](https://github.com/sponsors/khcrysalis)!! |
+|:-:|
+| <img src="https://raw.githubusercontent.com/khcrysalis/github-sponsor-graph/main/graph.png"> |
+| _**"samara is cute" - Vendicated**_ |
 
 ## License
 

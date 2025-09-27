@@ -21,7 +21,7 @@ extension EGHelperManager {
 	@Published var isHelperToolInstalled: Bool = false
 	@Published var message: String = "Checking..."
 	
-	private var helperConnection: NSXPCConnection?
+	private var _helperConnection: NSXPCConnection?
 	let helperToolIdentifier = "thewonderofyou.EasyPKG.Helper"
 	
 	var status: String {
@@ -71,8 +71,8 @@ extension EGHelperManager {
 		case .uninstall:
 			do {
 				try await service.unregister()
-				helperConnection?.invalidate()
-				helperConnection = nil
+				_helperConnection?.invalidate()
+				_helperConnection = nil
 			} catch let nsError as NSError {
 				occurredError = nsError
 				print("Failed to unregister helper: \(nsError.localizedDescription)")
@@ -87,16 +87,16 @@ extension EGHelperManager {
 	}
 	
 	private func _getConnection() -> NSXPCConnection? {
-		if let connection = helperConnection {
+		if let connection = _helperConnection {
 			return connection
 		}
 		let connection = NSXPCConnection(machServiceName: helperToolIdentifier, options: .privileged)
 		connection.remoteObjectInterface = NSXPCInterface(with: EGHelperProtocol.self)
 		connection.invalidationHandler = { [weak self] in
-			self?.helperConnection = nil
+			self?._helperConnection = nil
 		}
 		connection.resume()
-		helperConnection = connection
+		_helperConnection = connection
 		return connection
 	}
 	

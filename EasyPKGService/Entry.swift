@@ -25,7 +25,7 @@ class HelperToolDelegate: NSObject, NSXPCListenerDelegate, EGHelperProtocol {
 		shouldAcceptNewConnection newConnection: NSXPCConnection
 	) -> Bool {
 		guard 
-			isValidClient(connection: newConnection) 
+			_isValidClient(connection: newConnection) 
 		else {
 			return false
 		}
@@ -54,7 +54,7 @@ class HelperToolDelegate: NSObject, NSXPCListenerDelegate, EGHelperProtocol {
 		}
 	}
 	
-	private func isValidClient(connection: NSXPCConnection) -> Bool {
+	private func _isValidClient(connection: NSXPCConnection) -> Bool {
 		do {
 			return try CodesignCheck.codeSigningMatches(pid: connection.processIdentifier)
 		} catch {

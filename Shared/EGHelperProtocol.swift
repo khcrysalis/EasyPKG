@@ -8,6 +8,6 @@
 import Foundation
 
 @objc(EGHelperProtocol)
-public protocol EGHelperProtocol {
+protocol EGHelperProtocol {
 	func removeFiles(for relativePaths: Set<String>, reply: @escaping (Bool) -> Void)
 }

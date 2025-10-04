@@ -15,6 +15,8 @@ struct EGPackageDescriptiveInfoView: View {
 	var receipt: PKReceipt
 	var volume: String
 	
+	// MARK: Body
+	
 	var body: some View {
 		NavigationStack {
 			Form {

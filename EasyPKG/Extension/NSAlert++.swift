@@ -7,6 +7,7 @@
 
 import Cocoa
 
+// MARK: - NSAlert (extension): present
 extension NSAlert {
 	static func present(
 		title: String,

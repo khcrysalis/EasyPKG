@@ -5,6 +5,7 @@
 //  Created by samsam on 9/14/25.
 //
 
+// MARK: - EGUtils
 struct EGUtils {
 	static func readBom(atPath path: String) -> PKBOM {
 		PKBOM(bomPath: path)
@@ -52,8 +53,6 @@ extension EGUtils {
 		"com.apple.pkg.MobileDeviceDevelopment"
 	]}
 }
-
-#warning("move history struct to the appropriate view")
 
 extension EGUtils {
 	static func getMacOSVersion() -> String {

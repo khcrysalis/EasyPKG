@@ -20,6 +20,8 @@ struct EGPackageInfoView: View {
 	@Binding var volume: String
 	var forgetPackageAction: () -> ()
 	
+	// MARK: Body
+	
 	var body: some View {
 		VStack {
 			VStack(alignment: .leading) {
@@ -117,17 +119,17 @@ struct EGPackageInfoView: View {
 						}
 					}
 					
-//					Button(.localized("Uninstall")) {
-//						NSAlert.present(
-//							title: .localized("Are you sure you want to uninstall %@?", arguments: receipt.packageName),
-//							style: .critical,
-//							primaryButton: (.localized("Uninstall"), true)
-//						) {
-//							
-//						}
-//					}
-//					.buttonStyle(.borderedProminent)
-//					.tint(.red)
+					Button(.localized("Uninstall")) {
+						NSAlert.present(
+							title: .localized("Are you sure you want to uninstall %@?", arguments: receipt.packageName),
+							style: .critical,
+							primaryButton: (.localized("Uninstall"), true)
+						) {
+							
+						}
+					}
+					.buttonStyle(.borderedProminent)
+					.tint(.red)
 				}
 			}
 		}

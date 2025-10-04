@@ -64,6 +64,8 @@ struct EGPathNode: Identifiable {
 		FileManager.default.fileExists(atPath: node.path)
 	}
 	
+	#warning("bad way of doing it")
+	
 	static func isDisabled(node: EGPathNode) -> Bool {
 		let defaultVolume = UserDefaults.standard.string(forKey: "epkg.defaultVolume") ?? "/"
 		let normalizedDefault = (defaultVolume as NSString).standardizingPath
@@ -97,6 +99,7 @@ struct EGPathNode: Identifiable {
 // MARK: - PackagePathsDisclosureView
 struct EGPackagePathsDisclosureView: View {
 	let node: EGPathNode
+	var isHidden: Bool
 	@Binding var selectedPaths: Set<String>
 	@Binding var expandedNodes: Set<UUID>
 	
@@ -114,7 +117,9 @@ struct EGPackagePathsDisclosureView: View {
 			}
 		)
 		
-		let isEnabled = EGPathNode.pathExists(node: node) && !EGPathNode.isDisabled(node: node)
+		let isEnabled = !isHidden 
+		&& EGPathNode.pathExists(node: node) 
+		&& !EGPathNode.isDisabled(node: node)
 		
 		if node.children.isEmpty {
 			Toggle(isOn: Binding(
@@ -129,7 +134,8 @@ struct EGPackagePathsDisclosureView: View {
 			DisclosureGroup(isExpanded: isExpandedBinding) {
 				ForEach(node.children) { child in
 					EGPackagePathsDisclosureView(
-						node: child,
+						node: child, 
+						isHidden: isHidden,
 						selectedPaths: $selectedPaths,
 						expandedNodes: $expandedNodes
 					)

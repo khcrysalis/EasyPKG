@@ -21,19 +21,19 @@ struct EGPackageDescriptiveInfoView: View {
 				Section {
 					LabeledContent(
 						.localized("Name"),
-						value: receipt._packageName() as? String ?? .localized("Unknown")
+						value: receipt.packageName
 					)
 					LabeledContent(
 						.localized("Identifier"),
-						value: (receipt.packageIdentifier() as! String)
+						value: receipt.packageIdentifier
 					)
 					LabeledContent(
 						.localized("Version"),
-						value: receipt.packageVersion() as? String ?? .localized("Unknown")
+						value: receipt.packageVersion
 					)
 					LabeledContent(
-						.localized("Prefix Path"),
-						value: receipt.installPrefixPath() as? String ?? .localized("Unknown")
+						.localized("Install Path"),
+						value: receipt.packageInstallPath
 					)
 					LabeledContent(
 						.localized("Volume"),
@@ -45,22 +45,14 @@ struct EGPackageDescriptiveInfoView: View {
 					)
 					LabeledContent(
 						.localized("Installed Date"),
-						value: "\(receipt.installDate() as? Date ?? Date())"
+						value: "\(receipt.installDate)"
 					)
-				}
-				
-				Section(.localized("Additional Info")) {
-					LabeledContent(
-						.localized("Additional Info"),
-						value: receipt.additionalInfo() as? String ?? .localized("Unknown")
-					)
-					.labelsHidden()
 				}
 				
 				Section(.localized("Groups")) {
 					LabeledContent(
 						.localized("Groups"),
-						value: (receipt.packageGroups() as? [String])?.joined(separator: "\n") ?? .localized("Unknown")
+						value: (receipt.packageGroups?.joined(separator: "\n") ?? .localized("Unknown"))
 					)
 					.labelsHidden()
 				}
@@ -68,16 +60,16 @@ struct EGPackageDescriptiveInfoView: View {
 				Section(.localized("Receipt Paths")) {
 					LabeledContent(
 						.localized("Receipt Paths"),
-						value: (receipt.receiptStoragePaths() as! [String]).joined(separator: "\n")
+						value: (receipt.receiptStoragePaths).joined(separator: "\n")
 					)
 					Button(.localized("Reveal in Finder")) {
-						let fileUrls = (receipt.receiptStoragePaths() as! [String]).map { URL(fileURLWithPath: $0) }
+						let fileUrls = (receipt.receiptStoragePaths).map { URL(fileURLWithPath: $0) }
 						NSWorkspace.shared.activateFileViewerSelecting(fileUrls)
 					}
 				}
 			}
 			.formStyle(.grouped)
-			.navigationTitle(receipt._packageName() as? String ?? .localized("Unknown"))
+			.navigationTitle(receipt.packageName)
 			.toolbar {
 				ToolbarItem(placement: .cancellationAction) {
 					Button {

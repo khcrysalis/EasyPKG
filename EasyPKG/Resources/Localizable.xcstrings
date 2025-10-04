@@ -1,46 +1,70 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "Additional Info" : {
+    "Are you sure you want to delete %ld files and then forget the package afterwards?" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Additional Info"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Are you sure you want to delete %ld files and then forget the package afterwards?"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Are you sure you want to delete %ld files and then forget the package afterwards?"
+                }
+              }
+            }
           }
         }
       }
     },
-    "Are you sure you want to delete the selected files?" : {
+    "Are you sure you want to delete %ld files?" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Are you sure you want to delete the selected files?"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Are you sure you want to delete %ld file?"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Are you sure you want to delete %ld files?"
+                }
+              }
+            }
           }
         }
       }
     },
-    "Are you sure you want to forget this package and delete selected files?" : {
+    "Are you sure you want to forget %@?" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Are you sure you want to forget this package and delete selected files?"
+            "value" : "Are you sure you want to forget %@?"
           }
         }
       }
     },
-    "Are you sure you want to forget this package?" : {
+    "Are you sure you want to uninstall %@?" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Are you sure you want to forget this package?"
+            "value" : "Are you sure you want to uninstall %@?"
           }
         }
       }
@@ -166,6 +190,28 @@
         }
       }
     },
+    "Failed to delete some files." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to delete some files."
+          }
+        }
+      }
+    },
+    "Failed to forget %@." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to forget %@."
+          }
+        }
+      }
+    },
     "Filter" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -184,6 +230,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Forget"
+          }
+        }
+      }
+    },
+    "Forgetting a package will unregister it from your system, but won't delete any files associated with it." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forgetting a package will unregister it from your system, but won't delete any files associated with it."
           }
         }
       }
@@ -331,6 +388,18 @@
         }
       }
     },
+    "OK" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        }
+      },
+      "shouldTranslate" : false
+    },
     "Open Settings..." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -470,6 +539,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Status"
+          }
+        }
+      }
+    },
+    "Uninstall" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uninstall"
           }
         }
       }

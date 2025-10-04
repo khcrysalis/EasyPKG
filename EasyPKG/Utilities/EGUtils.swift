@@ -6,36 +6,6 @@
 //
 
 struct EGUtils {
-	static func receiptsOnVolume(atPath path: String) -> [PKReceipt] {
-		(PKReceipt.receiptsOnVolume(atPath: path) as? [PKReceipt]) ?? []
-	}
-
-	static func receiptHistoryOnVolume(atPath path: String) -> [HistoryItem] {
-		var items: [HistoryItem] = []
-		
-		if
-			let history = PKInstallHistory.history(onVolume: path) as? AnyObject,
-			let installedItems = history.installedItems() as? [NSDictionary]
-		{
-			for dict in installedItems {
-				if let date = dict["date"] as? Date {
-					let displayName = dict["displayName"] as? String ?? ""
-					let displayVersion = dict["displayVersion"] as? String ?? ""
-					let processName = dict["processName"] as? String ?? ""
-					
-					items.append(HistoryItem(
-						date: date,
-						displayName: displayName,
-						displayVersion: displayVersion,
-						processName: processName
-					))
-				}
-			}
-		}
-		
-		return items.sorted { $0.date > $1.date }
-	}
-	
 	static func readBom(atPath path: String) -> PKBOM {
 		PKBOM(bomPath: path)
 //		if let bom = PKBOM(bomPath: "/private/var/db/receipts/com.geode-sdk.geode.bom") {
@@ -83,13 +53,12 @@ extension EGUtils {
 	]}
 }
 
+#warning("move history struct to the appropriate view")
+
 extension EGUtils {
-	struct HistoryItem: Identifiable {
-		let id = UUID() // unique identifier
-		let date: Date
-		let displayName: String
-		let displayVersion: String
-		let processName: String
+	static func getMacOSVersion() -> String {
+		let osVersion = ProcessInfo.processInfo.operatingSystemVersion
+		return "\(osVersion.majorVersion).\(osVersion.minorVersion).\(osVersion.patchVersion)"
 	}
 }
 

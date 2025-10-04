@@ -1,11 +1,28 @@
 //
-//  ContentView.swift
+//  EGPackageListView.swift
 //  easypkg
 //
 //  Created by samsam on 9/14/25.
 //
 
 import SwiftUI
+
+// MARK: - EGPackageListView Filter
+extension EGPackageListView {
+	enum PackageFilter: String, CaseIterable, Identifiable {
+		case `default` = "default"
+		case date = "date"
+		
+		var id: String { rawValue }
+		
+		var localizedName: String {
+			switch self {
+			case .default:	"Default".localized()
+			case .date:		"Date".localized()
+			}
+		}
+	}
+}
 
 // MARK: - PackageListView
 struct EGPackageListView: View {
@@ -14,59 +31,28 @@ struct EGPackageListView: View {
 	@AppStorage("epkg.showHiddenPackages") private var _showHiddenPackages: Bool = false
 	
 	@State private var _selectedFilter: PackageFilter = .default
-	@State private var _normalPackages: [PKReceipt] = []
-	@State private var _hiddenPackages: [PKReceipt] = []
+	@State private var _packages: [PKReceipt] = []
 	@State private var _selectedPackage: PKReceipt? = nil
 	@State private var _isHistoryPresenting: Bool = false
 	
+	// MARK: Grouped by install date
 	private var _groupedByDate: [(day: Date, packages: [PKReceipt])] {
-		let all = _normalPackages + (_showHiddenPackages ? _hiddenPackages : [])
-		
-		let grouped = Dictionary(grouping: all) { pkg -> Date in
-			if let date = pkg.installDate() as? Date {
-				return Calendar.current.startOfDay(for: date)
-			}
-			return Date.distantPast
+		let visiblePackages = _packages.filter { !_showHiddenPackages ? !$0.isHidden : true }
+		let grouped = Dictionary(grouping: visiblePackages) { pkg -> Date in
+			pkg.installDate
 		}
-		
 		return grouped.keys.sorted(by: >).map { day in
 			(day, grouped[day] ?? [])
 		}
 	}
 	
 	// MARK: Body
-	
 	var body: some View {
 		NavigationSplitView {
 			List(selection: $_selectedPackage) {
-				if _selectedFilter == .default {
-					Section(.localized("Installed Packages")) {
-						ForEach(_normalPackages, id: \.self) { receipt in
-							NavigationLink(value: receipt) {
-								_packageRow(receipt)
-							}
-						}
-					}
-					
-					if _showHiddenPackages {
-						Section(.localized("Hidden Installed Packages")) {
-							ForEach(_hiddenPackages, id: \.self) { receipt in
-								NavigationLink(value: receipt) {
-									_packageRow(receipt)
-								}
-							}
-						}
-					}
-				}
-				
-				if _selectedFilter == .date {
-					ForEach(_groupedByDate, id: \.day) { group in
-						Section(header: Text(group.day, style: .date)) {
-							ForEach(group.packages, id: \.self) { receipt in
-								_packageRow(receipt)
-							}
-						}
-					}
+				switch _selectedFilter {
+				case .default: _defaultSections()
+				case .date: _dateSections()
 				}
 			}
 			.navigationTitle(.localized("Packages"))
@@ -89,11 +75,21 @@ struct EGPackageListView: View {
 						helperManager: _helperManager,
 						receipt: receipt,
 						volume: $_defaultVolume,
-						normalPackages: $_normalPackages,
-						hiddenPackages: $_hiddenPackages,
-						selectedPackage: $_selectedPackage
+						forgetPackageAction: {
+							_helperManager.removeFiles(for: Set(receipt.receiptStoragePaths)) { success in
+								if success {
+									_packages.removeAll { $0 == receipt }
+									_selectedPackage = nil
+								} else {
+									NSAlert.present(
+										title: .localized("Failed to forget %@.", arguments: receipt.packageName),
+										cancelButtonTitle: "OK"
+									) {}
+								}
+							}
+						}
 					)
-					.id(receipt.packageIdentifier() as! String)
+					.id(receipt.packageIdentifier)
 				} else {
 					ContentUnavailableView(
 						.localized("Select a Package"),
@@ -117,74 +113,82 @@ struct EGPackageListView: View {
 			}
 		}
 		.onAppear(perform: _loadPackages)
-		.onChange(of: _defaultVolume) { _, _ in
-			_loadPackages()
-		}
-		.onChange(of: _showHiddenPackages) { _, _ in
-			_loadPackages()
-		}
+		.onChange(of: _defaultVolume) { _,_ in _loadPackages() }
+		.onChange(of: _showHiddenPackages) { _,_ in _loadPackages() }
 		.onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
-			Task {
+			Task { 
 				await _helperManager.manageHelperTool()
+				// packagekit takes awhile to forget a package, so to avoid 
+				// refreshing somehow bringing back a forgotten package back 
+				// to life, lets wait a bit
+				try await Task.sleep(nanoseconds: 5_000_000)
+				await MainActor.run() {
+					_loadPackages()
+				}
 			}
-			_loadPackages()
 		}
 		.sheet(isPresented: $_isHistoryPresenting) {
 			EGHistoryListView()
 		}
-		.navigationSubtitle(.localized("Using PackageKit.framework on macOS %@", getMacOSVersion()))
+		.navigationSubtitle(.localized("Using PackageKit.framework on macOS %@", EGUtils.getMacOSVersion()))
 	}
-	
+
 	// MARK: Load
 	
 	private func _loadPackages() {
-		let allPackages = EGUtils.receiptsOnVolume(atPath: _defaultVolume)
-		
-		_normalPackages = allPackages.filter { pkg in
-			guard let id = pkg.packageIdentifier() as? String else { return false }
-			return !EGUtils.hiddenPackageIdentifiers().contains { hidden in id.contains(hidden) }
+		_packages = PKReceipt.getReceiptsOnVolume(atPath: _defaultVolume)
+	}
+
+	// MARK: Sections
+	
+	@ViewBuilder
+	private func _defaultSections() -> some View {
+		Section(.localized("Installed Packages")) {
+			ForEach(_packages.filter { !$0.isHidden }, id: \.packageIdentifier) { receipt in
+				NavigationLink(value: receipt) { 
+					_packageRow(receipt) 
+				}
+			}
 		}
 		
-		_hiddenPackages = allPackages.filter { pkg in
-			guard let id = pkg.packageIdentifier() as? String else { return false }
-			return EGUtils.hiddenPackageIdentifiers().contains { hidden in id.contains(hidden) }
+		if _showHiddenPackages {
+			Section(.localized("Hidden Installed Packages")) {
+				ForEach(_packages.filter(\.isHidden), id: \.packageIdentifier) { receipt in
+					NavigationLink(value: receipt) { 
+						_packageRow(receipt) 
+					}
+				}
+			}
 		}
 	}
-	
-	// MARK: Helpers
-	
-	func getMacOSVersion() -> String {
-		let osVersion = ProcessInfo.processInfo.operatingSystemVersion
-		return "\(osVersion.majorVersion).\(osVersion.minorVersion).\(osVersion.patchVersion)"
+
+	@ViewBuilder
+	private func _dateSections() -> some View {
+		ForEach(_groupedByDate, id: \.day) { group in
+			Section(header: Text(group.day, style: .date)) {
+				ForEach(group.packages, id: \.packageIdentifier) { receipt in
+					NavigationLink(value: receipt) { 
+						_packageRow(receipt) 
+					}
+				}
+			}
+		}
 	}
-	
-	// MARK: Builders
 	
 	private func _packageRow(_ receipt: PKReceipt) -> some View {
 		HStack {
 			EGFileImage()
-			LabeledContent(
-				receipt._packageName() as? String ?? .localized("Unknown"),
-				value: "\(receipt.packageVersion()! as! String) • \(receipt.packageIdentifier()! as! String)"
+			
+			EGLabeledContent(
+				title: receipt.packageName,
+				description: "\(receipt.packageVersion) • \(receipt.packageIdentifier)"
 			)
-			.labeledContentStyle(.vertical)
-		}
-	}
-}
-
-// MARK: - EGPackageListView (extension): Filter
-extension EGPackageListView {
-	enum PackageFilter: String, CaseIterable, Identifiable {
-		case `default` = "default"
-		case date = "date"
-		
-		var id: String { rawValue }
-		
-		var localizedName: String {
-			switch self {
-			case .default: return "Default".localized()
-			case .date: return "Date".localized()
+			
+			if receipt.isHidden {
+				Spacer()
+				Image(systemName:  "eye.slash").foregroundStyle(.secondary)
 			}
 		}
 	}
 }
+

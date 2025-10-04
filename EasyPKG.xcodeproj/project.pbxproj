@@ -298,6 +298,7 @@
 					"@executable_path/../Frameworks",
 				);
 				LOCALIZED_STRING_SWIFTUI_SUPPORT = NO;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = thewonderofyou.EasyPKG;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -335,6 +336,7 @@
 					"@executable_path/../Frameworks",
 				);
 				LOCALIZED_STRING_SWIFTUI_SUPPORT = NO;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = thewonderofyou.EasyPKG;
 				PRODUCT_NAME = "$(TARGET_NAME)";

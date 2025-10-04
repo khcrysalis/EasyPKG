@@ -9,33 +9,23 @@ import SwiftUI
 
 // MARK: - PackageInfoView
 struct EGPackageInfoView: View {
-	@State private var _prefixPath: String = ""
-	@State private var _prefixSeperator: String = ""
 	@State private var _receiptInstallPaths: [String] = []
 	@State private var _selectedPaths: Set<String> = []
 	@State private var _expandedNodes: Set<UUID> = []
 	@State private var _isDescriptivePresenting: Bool = false
 	@State private var _filePathsView: AnyView? = nil
 	
-	@State private var _isDeleteAlertPresenting = false
-	@State private var _isForgetDeleteAlertPresenting = false
-	@State private var _isForgetAlertPresenting = false
-	@State private var _isAlertPresenting = false
-	@State private var _alertTitle = ""
-	
 	@ObservedObject var helperManager: EGHelperManager
 	var receipt: PKReceipt
 	@Binding var volume: String
-	@Binding var normalPackages: [PKReceipt]
-	@Binding var hiddenPackages: [PKReceipt]
-	@Binding var selectedPackage: PKReceipt?
+	var forgetPackageAction: () -> ()
 	
 	var body: some View {
 		VStack {
 			VStack(alignment: .leading) {
 				HStack {
 					EGFileImage()
-					Text(receipt._packageName() as? String ?? .localized("Unknown"))
+					Text(receipt.packageName)
 						.font(.largeTitle)
 						.frame(maxWidth: .infinity, alignment: .leading)
 					Spacer()
@@ -44,9 +34,9 @@ struct EGPackageInfoView: View {
 					}
 				}
 				Group {
-					Text(verbatim: "\(receipt.packageVersion()! as! String) • \(receipt.packageIdentifier()! as! String)")
-					Text(verbatim: .localized("Installed on %@", arguments: (receipt.installDate() as! Date).description))
-					Text(.localized("Unpackaged at %@", _prefixPath))
+					Text(verbatim: "\(receipt.packageVersion) • \(receipt.packageIdentifier)")
+					Text(verbatim: .localized("Installed on %@", arguments: receipt.installDate.description))
+					Text(.localized("Unpackaged at %@", receipt.packageInstallPath))
 				}
 				.font(.subheadline)
 				.textSelection(.enabled)
@@ -66,30 +56,83 @@ struct EGPackageInfoView: View {
 			.listStyle(.bordered)
 			.padding(.vertical, 6)
 			
-			HStack {
-				Group {
-					Button(.localized("Deselect All")) {
-						_selectedPaths = []
+			if !receipt.isHidden {
+				HStack {
+					Group {
+						Button(.localized("Deselect All")) {
+							_selectedPaths = []
+						}
+						
+						Spacer()
+						
+						Button(.localized("Delete Selected Paths")) {
+							NSAlert.present(
+								title: .localized("Are you sure you want to delete %ld files?", arguments: Int32(_selectedPaths.count)),
+								style: .critical,
+								primaryButton: (.localized("Delete"), true)
+							) {
+								helperManager.removeFiles(for: _selectedPaths) { success in
+									if !success {
+										NSAlert.present(
+											title: .localized("Failed to delete some files."),
+											cancelButtonTitle: .localized("OK")
+										) {}
+									} else {
+										_selectedPaths = []
+									}
+								}
+							}
+						}
+						
+						Button(.localized("Delete Selected Paths & Forget")) {
+							NSAlert.present(
+								title: .localized("Are you sure you want to delete %ld files and then forget the package afterwards?", arguments: receipt.packageName, Int32(_selectedPaths.count)),
+								style: .critical,
+								primaryButton: (.localized("Delete & Forget"), true)
+							) {
+								helperManager.removeFiles(for: _selectedPaths) { success in
+									if !success {
+										NSAlert.present(
+											title: .localized("Failed to delete some files for %@."),
+											cancelButtonTitle: .localized("OK")
+										) {}
+									} else {
+										_selectedPaths = []
+										forgetPackageAction()
+									}
+								}
+							}
+						}
+					}
+					.disabled(_selectedPaths.isEmpty)
+					
+					Button(.localized("Forget")) {
+						NSAlert.present(
+							title: .localized("Are you sure you want to forget %@?", arguments: receipt.packageName),
+							message: .localized("Forgetting a package will unregister it from your system, but won't delete any files associated with it."),
+							style: .informational,
+							primaryButton: (.localized("Forget"), false)
+						) {
+							forgetPackageAction()
+						}
 					}
 					
-					Spacer()
-					
-					Button(.localized("Delete Selected Paths")) {
-						_isDeleteAlertPresenting = true
-					}
-					
-					Button(.localized("Delete Selected Paths & Forget")) {
-						_isForgetDeleteAlertPresenting = true
-					}
-				}
-				.disabled(_selectedPaths.isEmpty)
-				
-				Button(.localized("Forget")) {
-					_isForgetAlertPresenting = true
+//					Button(.localized("Uninstall")) {
+//						NSAlert.present(
+//							title: .localized("Are you sure you want to uninstall %@?", arguments: receipt.packageName),
+//							style: .critical,
+//							primaryButton: (.localized("Uninstall"), true)
+//						) {
+//							
+//						}
+//					}
+//					.buttonStyle(.borderedProminent)
+//					.tint(.red)
 				}
 			}
 		}
-		.padding(4)
+		.navigationTitle(receipt.packageName)
+		.padding()
 		.onAppear {
 			_loadData()
 			_updatePaths()
@@ -97,66 +140,15 @@ struct EGPackageInfoView: View {
 		.sheet(isPresented: $_isDescriptivePresenting) {
 			EGPackageDescriptiveInfoView(receipt: receipt, volume: volume)
 		}
-		.alert(_alertTitle, isPresented: $_isAlertPresenting, actions: {
-			Button("OK", role: .cancel) { }
-		})
-		.alert(.localized("Are you sure you want to delete the selected files?"), isPresented: $_isDeleteAlertPresenting) {
-			Button(.localized("Delete Selected Paths"), role: .destructive) {
-				helperManager.removeFiles(for: _selectedPaths) { success in
-					if !success {
-						_alertTitle = "Failed to delete \(receipt._packageName() as? String ?? .localized("Unknown"))"
-						_isAlertPresenting = true
-					} else {
-						_selectedPaths = []
-					}
-				}
-			}
-			Button(.localized("Cancel"), role: .cancel) { }
-		}
-		.alert(.localized("Are you sure you want to forget this package and delete selected files?"), isPresented: $_isForgetDeleteAlertPresenting) {
-			Button(.localized("Delete Selected Paths & Forget"), role: .destructive) {
-				helperManager.removeFiles(for: _selectedPaths) { success in
-					if !success {
-						_alertTitle = "Failed to delete & forget \(receipt._packageName() as? String ?? .localized("Unknown"))"
-						_isAlertPresenting = true
-					} else {
-						_selectedPaths = []
-						_forget(for: receipt) { success in
-							if !success {
-								_alertTitle = "Failed to forget \(receipt._packageName() as? String ?? .localized("Unknown"))"
-								_isAlertPresenting = true
-							}
-						}
-					}
-				}
-			}
-			Button(.localized("Cancel"), role: .cancel) { }
-		}
-		.alert(.localized("Are you sure you want to forget this package?"), isPresented: $_isForgetAlertPresenting) {
-			Button(.localized("Forget"), role: .destructive) {
-				_forget(for: receipt) { success in
-					if !success {
-						_alertTitle = "Failed to forget \(receipt._packageName() as? String ?? .localized("Unknown"))"
-						_isAlertPresenting = true
-					}
-				}
-			}
-			Button(.localized("Cancel"), role: .cancel) { }
-		}
-		.padding()
 	}
 	
 	// MARK: Load
 	
 	private func _loadData() {
-		let prefix = receipt.installPrefixPath()! as! String
-		_prefixPath = prefix.hasPrefix("/") ? prefix : volume + prefix
-		_prefixSeperator = _prefixPath.hasSuffix("/") ? "" : "/"
-		
 		if let enumerator = receipt._directoryEnumerator() as? NSEnumerator {
 			EGUtils.listPathsFromDirectoryEnumerator(
 				enumerator: enumerator,
-				prefix: _prefixPath + _prefixSeperator,
+				prefix: receipt.packageInstallPath,
 				installPaths: &_receiptInstallPaths
 			)
 		}
@@ -181,26 +173,11 @@ struct EGPackageInfoView: View {
 			List {
 				EGPackagePathsDisclosureView(
 					node: EGPathNode.buildPathTree(from: _receiptInstallPaths),
+					isHidden: receipt.isHidden,
 					selectedPaths: $_selectedPaths,
 					expandedNodes: $_expandedNodes
 				)
-				.padding(.leading, 1)
 			}
 		)
-	}
-	
-	private func _forget(for receipt: PKReceipt, completion: @escaping (Bool) -> Void) {
-		if let p = receipt.receiptStoragePaths() as? [String] {
-			helperManager.removeFiles(for: Set(p)) { success in
-				if success {
-					normalPackages.removeAll { $0 == receipt }
-					hiddenPackages.removeAll { $0 == receipt }
-					selectedPackage = nil
-				}
-				completion(success)
-			}
-		} else {
-			completion(false)
-		}
 	}
 }

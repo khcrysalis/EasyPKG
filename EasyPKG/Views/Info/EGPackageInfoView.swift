@@ -69,7 +69,7 @@ struct EGPackageInfoView: View {
 						
 						Button(.localized("Delete Selected Paths")) {
 							NSAlert.present(
-								title: .localized("Are you sure you want to delete %ld files?", arguments: Int32(_selectedPaths.count)),
+								title: .localized("Are you sure you want to delete %ld files?", arguments: _selectedPaths.count),
 								style: .critical,
 								primaryButton: (.localized("Delete"), true)
 							) {
@@ -88,7 +88,7 @@ struct EGPackageInfoView: View {
 						
 						Button(.localized("Delete Selected Paths & Forget")) {
 							NSAlert.present(
-								title: .localized("Are you sure you want to delete %ld files and then forget the package afterwards?", arguments: receipt.packageName, Int32(_selectedPaths.count)),
+								title: .localized("Are you sure you want to delete %ld files and then forget the package afterwards?", arguments: _selectedPaths.count),
 								style: .critical,
 								primaryButton: (.localized("Delete & Forget"), true)
 							) {

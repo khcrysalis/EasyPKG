@@ -37,7 +37,8 @@ extension EGUtils {
 		"com.apple.pkg.CLTools",
 		"com.apple.pkg.XcodeSystemResources",
 		"com.apple.pkg.MobileDeviceDevelopment",
-		"com.apple.pkg.CoreTypes"
+		"com.apple.pkg.CoreTypes",
+		"com.apple.pkg.MobileDevice"
 	]}
 }
 

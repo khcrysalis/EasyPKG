@@ -54,6 +54,19 @@ extension PKReceipt {
 				paths.insert(self.packageInstallPath + file)
 			}
 		}
+		
+		// lol
+		var prefix = (self.packageInstallPath == UserDefaults.standard.string(forKey: "epkg.defaultVolume") ?? "/") 
+		? "" 
+		: self.packageInstallPath
+		
+		if !prefix.isEmpty {
+			if prefix.hasSuffix("/") {
+				prefix.removeLast()
+			}
+			paths.insert(prefix)
+		}
+		
 		return paths
 	}
 
@@ -64,11 +77,7 @@ extension PKReceipt {
 		}
 
 		for pkg in otherPackages {
-			if let enumerator = pkg._directoryEnumerator() as? NSEnumerator {
-				for case let file as String in enumerator {
-					paths.insert(pkg.packageInstallPath + file)
-				}
-			}
+			paths.formUnion(pkg.enumeratePaths())
 		}
 
 		return paths

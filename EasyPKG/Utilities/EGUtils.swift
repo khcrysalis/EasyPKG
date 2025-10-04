@@ -38,7 +38,8 @@ extension EGUtils {
 		"com.apple.pkg.XcodeSystemResources",
 		"com.apple.pkg.MobileDeviceDevelopment",
 		"com.apple.pkg.CoreTypes",
-		"com.apple.pkg.MobileDevice"
+		"com.apple.pkg.MobileDevice",
+		"com.apple.pkg.MAContent10"
 	]}
 }
 

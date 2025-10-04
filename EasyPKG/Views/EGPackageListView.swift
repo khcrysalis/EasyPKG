@@ -118,10 +118,6 @@ struct EGPackageListView: View {
 		.onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
 			Task { 
 				await _helperManager.manageHelperTool()
-				// packagekit takes awhile to forget a package, so to avoid 
-				// refreshing somehow bringing back a forgotten package back 
-				// to life, lets wait a bit
-				try await Task.sleep(nanoseconds: 5_000_000)
 				await MainActor.run() {
 					_loadPackages()
 				}

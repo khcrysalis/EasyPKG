@@ -46,6 +46,7 @@ extension PKReceipt {
 	}
 	
 	static func getReceiptsOnVolume(atPath path: String) -> [PKReceipt] {
-		(Self.receiptsOnVolume(atPath: path) as? [PKReceipt]) ?? []
+		Self._clearCache()
+		return (Self.receiptsOnVolume(atPath: path) as? [PKReceipt]) ?? []
 	}
 }

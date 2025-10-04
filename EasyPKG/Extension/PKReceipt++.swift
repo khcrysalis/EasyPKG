@@ -22,7 +22,7 @@ extension PKReceipt {
 	}
 	
 	var isHidden: Bool {
-		EGUtils.hiddenPackageIdentifiers().contains(where: { packageIdentifier.contains($0) })
+		self.receiptStoragePaths.contains { $0.hasPrefix("/Library/Apple/System/Library/Receipts/") }
 	}
 	
 	static func getReceiptsOnVolume(atPath path: String) -> [PKReceipt] {

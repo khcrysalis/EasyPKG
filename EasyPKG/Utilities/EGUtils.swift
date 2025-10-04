@@ -27,23 +27,6 @@ struct EGUtils {
 }
 
 extension EGUtils {
-	static func hiddenPackageIdentifiers() -> [String] {[
-		"com.apple.files.data-template",
-		"com.apple.pkg.XProtectPlistConfigData",
-		"com.apple.pkg.XProtectPayloads",
-		"com.apple.pkg.MRTConfigData",
-		"com.apple.pkg.RosettaUpdateAuto",
-		"com.apple.pkg.GatekeeperCompatibilityData",
-		"com.apple.pkg.CLTools",
-		"com.apple.pkg.XcodeSystemResources",
-		"com.apple.pkg.MobileDeviceDevelopment",
-		"com.apple.pkg.CoreTypes",
-		"com.apple.pkg.MobileDevice",
-		"com.apple.pkg.MAContent10"
-	]}
-}
-
-extension EGUtils {
 	static func getMacOSVersion() -> String {
 		let osVersion = ProcessInfo.processInfo.operatingSystemVersion
 		return "\(osVersion.majorVersion).\(osVersion.minorVersion).\(osVersion.patchVersion)"

@@ -75,10 +75,7 @@ struct EGPackageInfoView: View {
 							) {
 								helperManager.removeFiles(for: _selectedPaths) { success in
 									if !success {
-										NSAlert.present(
-											title: .localized("Failed to delete some files."),
-											cancelButtonTitle: .localized("OK")
-										) {}
+										_showDeleteError(for: receipt)
 									} else {
 										_selectedPaths = []
 									}
@@ -94,10 +91,7 @@ struct EGPackageInfoView: View {
 							) {
 								helperManager.removeFiles(for: _selectedPaths) { success in
 									if !success {
-										NSAlert.present(
-											title: .localized("Failed to delete some files for %@."),
-											cancelButtonTitle: .localized("OK")
-										) {}
+										_showDeleteError(for: receipt)
 									} else {
 										_selectedPaths = []
 										forgetPackageAction()
@@ -122,10 +116,18 @@ struct EGPackageInfoView: View {
 					Button(.localized("Uninstall")) {
 						NSAlert.present(
 							title: .localized("Are you sure you want to uninstall %@?", arguments: receipt.packageName),
+							message: .localized("This will delete most files associated with the package and then it will unregister it from your system. This is a dangerous action."),
 							style: .critical,
 							primaryButton: (.localized("Uninstall"), true)
 						) {
-							
+							helperManager.removeFiles(for: receipt.listUniqueFilesToDelete(fromVolume: volume)) { success in
+								if !success {
+									_showDeleteError(for: receipt)
+								} else {
+									_selectedPaths = []
+									forgetPackageAction()
+								}
+							}
 						}
 					}
 					.buttonStyle(.borderedProminent)
@@ -148,11 +150,9 @@ struct EGPackageInfoView: View {
 	
 	private func _loadData() {
 		if let enumerator = receipt._directoryEnumerator() as? NSEnumerator {
-			EGUtils.listPathsFromDirectoryEnumerator(
-				enumerator: enumerator,
-				prefix: receipt.packageInstallPath,
-				installPaths: &_receiptInstallPaths
-			)
+			_receiptInstallPaths = (enumerator.allObjects as? [String] ?? []).map {
+				receipt.packageInstallPath + $0
+			}
 		}
 	}
 	
@@ -176,10 +176,18 @@ struct EGPackageInfoView: View {
 				EGPackagePathsDisclosureView(
 					node: EGPathNode.buildPathTree(from: _receiptInstallPaths),
 					isHidden: receipt.isHidden,
+					disabledPaths: receipt.listUniqueFilesToExclude(fromVolume: volume),
 					selectedPaths: $_selectedPaths,
 					expandedNodes: $_expandedNodes
 				)
 			}
 		)
+	}
+	
+	private func _showDeleteError(for receipt: PKReceipt) {
+		NSAlert.present(
+			title: .localized("Failed to delete some files for %@.", arguments: receipt.packageName),
+			cancelButtonTitle: .localized("OK")
+		) {}
 	}
 }

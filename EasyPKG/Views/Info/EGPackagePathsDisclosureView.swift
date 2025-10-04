@@ -50,10 +50,10 @@ struct EGPathNode: Identifiable {
 		let hash = SHA256.hash(data: Data(string.utf8))
 		let uuidBytes = Array(hash.prefix(16))
 		let uuid = UUID(uuid: (
-			uuidBytes[0], uuidBytes[1], uuidBytes[2], uuidBytes[3],
-			uuidBytes[4], uuidBytes[5], uuidBytes[6], uuidBytes[7],
-			uuidBytes[8], uuidBytes[9], uuidBytes[10], uuidBytes[11],
-			uuidBytes[12], uuidBytes[13], uuidBytes[14], uuidBytes[15]
+			uuidBytes[0], 	uuidBytes[1], 	uuidBytes[2], 	uuidBytes[3],
+			uuidBytes[4], 	uuidBytes[5], 	uuidBytes[6], 	uuidBytes[7],
+			uuidBytes[8], 	uuidBytes[9], 	uuidBytes[10], 	uuidBytes[11],
+			uuidBytes[12], 	uuidBytes[13], 	uuidBytes[14], 	uuidBytes[15]
 		))
 		return uuid.uuidString
 	}
@@ -64,31 +64,9 @@ struct EGPathNode: Identifiable {
 		FileManager.default.fileExists(atPath: node.path)
 	}
 	
-	#warning("bad way of doing it")
-	
-	static func isDisabled(node: EGPathNode) -> Bool {
-		let defaultVolume = UserDefaults.standard.string(forKey: "epkg.defaultVolume") ?? "/"
-		let normalizedDefault = (defaultVolume as NSString).standardizingPath
-		
-		let disallowedSuffixes = [
-			"", // root
-			"Applications",
-			"Library",
-			"Library/Apple",
-			"Library/Apple/System",
-			"Library/Apple/System/CoreServices",
-			"Library/Fonts",
-			"Library/Developer",
-			"private/var",
-			"private/var/db"
-		]
-		
-		let disallowed = disallowedSuffixes.map { suffix in
-			((normalizedDefault as NSString).appendingPathComponent(suffix) as NSString).standardizingPath
-		}
-		
+	static func isDisabled(node: EGPathNode, using paths: Set<String>) -> Bool {
 		let nodePath = (node.path as NSString).standardizingPath
-		return disallowed.contains(nodePath)
+		return paths.contains(nodePath)
 	}
 	
 	static func revealInFinder(node: EGPathNode) {
@@ -100,6 +78,7 @@ struct EGPathNode: Identifiable {
 struct EGPackagePathsDisclosureView: View {
 	let node: EGPathNode
 	var isHidden: Bool
+	var disabledPaths = Set<String>()
 	@Binding var selectedPaths: Set<String>
 	@Binding var expandedNodes: Set<UUID>
 	
@@ -119,7 +98,7 @@ struct EGPackagePathsDisclosureView: View {
 		
 		let isEnabled = !isHidden 
 		&& EGPathNode.pathExists(node: node) 
-		&& !EGPathNode.isDisabled(node: node)
+		&& !EGPathNode.isDisabled(node: node, using: disabledPaths)
 		
 		if node.children.isEmpty {
 			Toggle(isOn: Binding(
@@ -136,6 +115,7 @@ struct EGPackagePathsDisclosureView: View {
 					EGPackagePathsDisclosureView(
 						node: child, 
 						isHidden: isHidden,
+						disabledPaths: disabledPaths,
 						selectedPaths: $selectedPaths,
 						expandedNodes: $expandedNodes
 					)

@@ -190,13 +190,13 @@
         }
       }
     },
-    "Failed to delete some files." : {
+    "Failed to delete some files for %@." : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Failed to delete some files."
+            "value" : "Failed to delete some files for %@."
           }
         }
       }
@@ -539,6 +539,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Status"
+          }
+        }
+      }
+    },
+    "This will delete most files associated with the package and then it will unregister it from your system. This is a dangerous action." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This will delete most files associated with the package and then it will unregister it from your system. This is a dangerous action."
           }
         }
       }

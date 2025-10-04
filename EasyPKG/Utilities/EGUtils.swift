@@ -7,8 +7,8 @@
 
 // MARK: - EGUtils
 struct EGUtils {
-	static func readBom(atPath path: String) -> PKBOM {
-		PKBOM(bomPath: path)
+//	static func readBom(atPath path: String) -> PKBOM {
+//		PKBOM(bomPath: path)
 //		if let bom = PKBOM(bomPath: "/private/var/db/receipts/com.geode-sdk.geode.bom") {
 //			print("Total size: \(bom.totalSize())")
 //			print("File count: \(bom.fileCount())")
@@ -23,21 +23,7 @@ struct EGUtils {
 //				}
 //			}
 //		}
-	}
-	
-	static func listPathsFromDirectoryEnumerator(
-		enumerator: NSEnumerator,
-		prefix: String = "",
-		installPaths: inout [String]
-	) {
-		var paths: [String] = []
-		
-		while let path = enumerator.nextObject() as? String {
-			paths.append(prefix + path)
-		}
-		
-		installPaths = paths
-	}
+//	}
 }
 
 extension EGUtils {
@@ -50,7 +36,8 @@ extension EGUtils {
 		"com.apple.pkg.GatekeeperCompatibilityData",
 		"com.apple.pkg.CLTools",
 		"com.apple.pkg.XcodeSystemResources",
-		"com.apple.pkg.MobileDeviceDevelopment"
+		"com.apple.pkg.MobileDeviceDevelopment",
+		"com.apple.pkg.CoreTypes"
 	]}
 }
 
@@ -60,26 +47,3 @@ extension EGUtils {
 		return "\(osVersion.majorVersion).\(osVersion.minorVersion).\(osVersion.patchVersion)"
 	}
 }
-
-/*
-
- //
- //  main.swift
- //  epkg
- //
- //  Created by samsam on 9/9/25.
- //
-
- import Foundation
-
- // PKPackageInfo(identifier: "com.apple.pkg.SFSymbols")
- // PKDistribution(contentsOfURL: URL(fileURLWithPath: "/"), error: nil)
-
- // PKReceipt.receipt(withIdentifier: <#T##Any!#>, volume: <#T##Any!#>)
- //let a = PKComponent.findComponents(withIdentifier: "com.apple.pkg.SFSymbols", destination: "/")
- //print(a)
-
- // we need a way to find a package based on the identifier somehow
-
- */
-

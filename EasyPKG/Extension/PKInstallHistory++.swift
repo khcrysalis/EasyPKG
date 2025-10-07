@@ -12,6 +12,6 @@ extension PKInstallHistory {
 	}
 	
 	var installedItems: [NSDictionary] {
-		self.installedItems() as! [NSDictionary]
+		self.installedItems() as? [NSDictionary] ?? []
 	}
 }

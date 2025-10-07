@@ -8,11 +8,11 @@
 // MARK: - Convenience wrappers for PKReceipt
 extension PKReceipt {
 	var packageIdentifier: String { self.packageIdentifier() as! String }
-	var packageVersion: String { self.packageVersion() as! String }
+	var packageVersion: String { self.packageVersion() as? String ?? "0" }
 	var packageName: String { self._packageName() as? String ?? self.packageIdentifier }
 	var packageGroups: [String]? { self.packageGroups() as? [String] }
-	var installDate: Date { self.installDate() as! Date }
-	var receiptStoragePaths: [String] { self.receiptStoragePaths() as! [String] }
+	var installDate: Date { self.installDate() as? Date ?? Date() }
+	var receiptStoragePaths: [String] { self.receiptStoragePaths() as? [String] ?? [] }
 	var installPrefixPath: String { self.installPrefixPath() as! String }
 	
 	var packageInstallPath: String {
